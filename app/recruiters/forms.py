@@ -1,133 +1,70 @@
-import ipaddress
-
 from flask_wtf import FlaskForm
 from wtforms import StringField
-from wtforms import PasswordField
-from wtforms import BooleanField
+from wtforms import TextAreaField
 from wtforms import SubmitField
-from wtforms import ValidationError
+from wtforms import IntegerField
+from wtforms import SelectField
 
-from wtforms.validators import Email
-from wtforms.validators import Length
-from wtforms.validators import EqualTo
-from wtforms.validators import Regexp
-from wtforms.validators import IPAddress
 from wtforms.validators import DataRequired
+from wtforms.validators import Length
+from wtforms.validators import Optional
+from wtforms.validators import URL
+from wtforms.validators import ValidationError
+from wtforms.fields.html5 import URLField
 
-from ..models import User
-from ..models import DHCPServer
+from ..models import Recruiter
+from ..models import Organization
 
 
-class PasswordResetRequestForm(FlaskForm):
-    emailAddress = StringField(
-        "Enter your email address",
-        validators=[DataRequired(), Length(1, 128), Email()],
-        render_kw={"placeholder": "Enter your email address"},
+class JobListingForm(FlaskForm):
+    title = StringField(
+        "Job Title", validators=[DataRequired(), Length(max=255)]
     )
-    submit = SubmitField("Login")
-
-
-class LoginForm(FlaskForm):
-    emailAddress = StringField(
-        "Enter your email address",
-        validators=[DataRequired(), Length(1, 128), Email()],
-        render_kw={"placeholder": "Enter your email address here"},
+    description = TextAreaField("Job Description", validators=[DataRequired()])
+    requirements = TextAreaField("Requirements", validators=[Optional()])
+    responsibilities = TextAreaField(
+        "Responsibilities", validators=[Optional()]
     )
-    password = PasswordField(
-        "Password",
+    employmentType = SelectField(
+        "Employment Type",
+        choices=[
+            ("Full-Time", "Full-Time"),
+            ("Part-Time", "Part-Time"),
+            ("Internship", "Internship"),
+        ],
         validators=[DataRequired()],
-        render_kw={"placeholder": "Enter password"},
     )
-    remember_me = BooleanField("Keep me logged in")
-    submit = SubmitField("Login")
-
-
-class PasswordResetForm(FlaskForm):
-    password = PasswordField(
-        "Enter your Password",
-        validators=[
-            DataRequired(),
-        ],
-        render_kw={
-            "autocomplete": "new-password",
-            "placeholder": "Enter new password",
-        },
+    location = StringField(
+        "Location", validators=[DataRequired(), Length(max=100)]
     )
-    confirmPassword = PasswordField(
-        "Confirm your password",
-        validators=[DataRequired(), EqualTo("password")],
-        render_kw={
-            "autocomplete": "new-password",
-            "placeholder": "Re-enter new password",
-        },
+    organizationId = IntegerField(
+        "Organization ID", validators=[DataRequired()]
     )
-    submit = SubmitField("Submit")
+    submit = SubmitField("Save Job Listing")
+
+    def validate_organizationId(self, field):
+        if not Organization.query.get(field.data):
+            raise ValidationError("Invalid organization ID.")
 
 
-class UserRegistrationForm(FlaskForm):
-    fullName = StringField(
-        "Full Name",
-        validators=[DataRequired(), Length(max=200)],
-        render_kw={"placeholder": "Enter full name here"},
+class UpdateJobListingForm(JobListingForm):
+    submit = SubmitField("Update Job Listing")
+
+
+class OrganizationForm(FlaskForm):
+    description = TextAreaField("Description", validators=[DataRequired()])
+    location = StringField(
+        "Location", validators=[Optional(), Length(max=100)]
     )
-    emailAddress = StringField(
-        "Email Address",
-        validators=[DataRequired(), Email(), Length(max=100)],
-        render_kw={"placeholder": "Enter email address here"},
-    )
-    phoneNumber = StringField(
-        "Phone Number",
-        validators=[
-            DataRequired(),
-            Regexp(r"^\+?1?\d{9,14}$", message="Invalid phone number format."),
-        ],
-        render_kw={"placeholder": "Enter phone number here"},
-    )
-    submit = SubmitField("Save User")
+    employees = IntegerField("Number of Employees", validators=[Optional()])
+    imageUrl = URLField("Image URL", validators=[Optional(), URL()])
+    recruiterId = IntegerField("Recruiter ID", validators=[Optional()])
+    submit = SubmitField("Save Organization")
 
-    def validate_emailAddress(self, field):
-        if User.query.filter_by(emailAddress=field.data.lower()).first():
-            raise ValidationError("Email address already registered.")
-
-    def validate_phoneNumber(self, field):
-        if User.query.filter_by(phoneNumber=field.data.lower()).first():
-            raise ValidationError("Phone number already registered.")
+    def validate_recruiterId(self, field):
+        if field.data and not Recruiter.query.get(field.data):
+            raise ValidationError("Invalid recruiter ID.")
 
 
-class DHCPServerForm(FlaskForm):
-    name = StringField("Server Name", validators=[DataRequired()])
-    ip_range_start = StringField(
-        "IP Range Start", validators=[DataRequired(), IPAddress()]
-    )
-    ip_range_end = StringField(
-        "IP Range End", validators=[DataRequired(), IPAddress()]
-    )
-    submit = SubmitField("Add DHCP Server")
-
-    def validate_ip_range_start(self, field):
-        # Ensure the range is valid
-        try:
-            ip_start_int = int(ipaddress.IPv4Address(field.data))
-            ip_end_int = int(ipaddress.IPv4Address(self.ip_range_end.data))
-
-            if ip_start_int >= ip_end_int:
-                raise ValidationError("Start IP must be less than End IP.")
-        except ValueError:
-            raise ValidationError("Invalid IP address format.")
-
-        # Check for IP range conflict with existing DHCP servers
-        existing_servers = DHCPServer.query.all()
-        for server in existing_servers:
-            existing_start_int = int(
-                ipaddress.IPv4Address(server.ip_range_start)
-            )
-            existing_end_int = int(ipaddress.IPv4Address(server.ip_range_end))
-
-            # Check if the IP range overlaps
-            if (
-                ip_start_int <= existing_end_int
-                and ip_end_int >= existing_start_int
-            ):
-                raise ValidationError(
-                    "IP range conflicts with existing DHCP server."
-                )
+class UpdateOrganizationForm(OrganizationForm):
+    submit = SubmitField("Update Organization")
