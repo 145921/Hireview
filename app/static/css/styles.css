@@ -9,7 +9,7 @@
 body {
 	color: var(--dark-blue);
 	font-size: 1.1rem;
-	font-family: Arial, sans-serif;
+	font-family: Poppins, sans-serif;
 }
 
 .navbar, footer {
