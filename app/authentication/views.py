@@ -5,8 +5,6 @@ from flask_login import login_required
 
 from . import authentication
 from .forms import UserLoginForm
-from .forms import ApplicantLoginForm
-from .forms import RecruiterLoginForm
 from .forms import PasswordResetForm
 from .forms import UserRegistrationForm
 from .forms import ApplicantRegistrationForm
@@ -20,118 +18,85 @@ from ..models import Recruiter
 from utilities.authentication import user_type_validator
 
 
-# ------------------------------------------------------------------------------
-#                                 SIGNING IN                                  -
-# ------------------------------------------------------------------------------
-@authentication.route("/user/login", methods=["GET", "POST"])
-def user_login():
-    # Limit functionality to Anonymous Users
-    if current_user.is_authenticated:
+def redirect_after_login(dashboard_route, name):
+    next_page = flask.request.args.get("next")
+    if not next_page or not next_page.startswith("/"):
+        next_page = flask.url_for(dashboard_route)
+
+    flask.flash(f"Hello {name}. Welcome back!")
+    return flask.redirect(next_page)
+
+
+def redirect_based_on_role():
+    # Redirect based on user type of the current user
+    if isinstance(current_user._get_current_object(), User):
         return flask.redirect(flask.url_for("administrators.dashboard"))
+
+    elif isinstance(current_user._get_current_object(), Applicant):
+        return flask.redirect(flask.url_for("applicants.dashboard"))
+
+    elif isinstance(current_user._get_current_object(), Recruiter):
+        return flask.redirect(flask.url_for("recruiters.dashboard"))
+
+    else:
+        return flask.redirect(flask.url_for("authentication.login"))
+
+
+@authentication.route("/login", methods=["GET", "POST"])
+def login():
+    # Redirect already logged-in users to their respective dashboards
+    if current_user.is_authenticated:
+        return redirect_based_on_role()
 
     form = UserLoginForm()
 
     if form.validate_on_submit():
-        # Find user with given email address
-        user = User.query.filter_by(
-            emailAddress=form.emailAddress.data.lower()
-        ).first()
+        email = form.emailAddress.data.lower()
+        password = form.password.data
+        remember_me = form.remember_me.data
 
-        # Login user if found
-        details = {
-            "password": form.password.data,
-            "remember_me": form.remember_me.data,
-        }
+        # Try to find the user in each user table (User, Applicant, Recruiter)
+        user = User.query.filter_by(emailAddress=email).first()
+        applicant = (
+            Applicant.query.filter_by(emailAddress=email).first()
+            if not user
+            else None
+        )
+        recruiter = (
+            Recruiter.query.filter_by(emailAddress=email).first()
+            if not (user or applicant)
+            else None
+        )
 
-        if user:
-            success, message = user.login(details)
+        # Attempt login for each user type and redirect accordingly
+        if (
+            user
+            and user.login({"password": password, "remember_me": remember_me})[
+                0
+            ]
+        ):
+            return redirect_after_login("administrators.dashboard", user.name)
 
-            if success:
-                next = flask.request.args.get("next")
-                if not next or not next.startswith("/"):
-                    next = flask.url_for("administrators.dashboard")
+        if (
+            applicant
+            and applicant.login(
+                {"password": password, "remember_me": remember_me}
+            )[0]
+        ):
+            return redirect_after_login("applicants.dashboard", applicant.name)
 
-                flask.flash(f"Hello {current_user.firstName}. Welcome back!")
-                return flask.redirect(next)
+        if (
+            recruiter
+            and recruiter.login(
+                {"password": password, "remember_me": remember_me}
+            )[0]
+        ):
+            return redirect_after_login("recruiters.dashboard", recruiter.name)
 
-        # Notify user of invalid credentials
+        # Flash message if credentials are invalid for any user type
         flask.flash("You provided invalid credentials. Please try again.")
 
-    return flask.render_template("authentication/user_login.html", form=form)
-
-
-@authentication.route("/applicant/login", methods=["GET", "POST"])
-def applicant_login():
-    # Limit functionality to Anonymous Users
-    if current_user.is_authenticated:
-        return flask.redirect(flask.url_for("applicants.dashboard"))
-
-    form = ApplicantLoginForm()
-
-    if form.validate_on_submit():
-        details = {
-            "password": form.password.data,
-            "remember_me": form.remember_me.data,
-        }
-
-        # Find user with given email address
-        applicant = Applicant.query.filter_by(
-            emailAddress=form.emailAddress.data.lower()
-        ).first()
-
-        # Login user if found
-        if applicant:
-            success, message = applicant.login(details)
-
-            if success:
-                next = flask.request.args.get("next")
-                if not next or not next.startswith("/"):
-                    next = flask.url_for("applicants.dashboard")
-
-                flask.flash(f"Hello {current_user.fullName}. Welcome back!")
-                return flask.redirect(next)
-
-        # Notify user of invalid credentials
-        flask.flash("You provided invalid credentials. Please try again.")
-
-    return flask.render_template("authentication/applicant_login.html", form=form)
-
-
-@authentication.route("/recruiter/login", methods=["GET", "POST"])
-def recruiter_login():
-    # Limit functionality to Anonymous Users
-    if current_user.is_authenticated:
-        return flask.redirect(flask.url_for("recruiters.dashboard"))
-
-    form = RecruiterLoginForm()
-
-    if form.validate_on_submit():
-        details = {
-            "password": form.password.data,
-            "remember_me": form.remember_me.data,
-        }
-
-        # Find user with given email address
-        recruiter = Recruiter.query.filter_by(
-            emailAddress=form.emailAddress.data.lower()
-        ).first()
-
-        # Login user if found
-        if recruiter:
-            success, message = recruiter.login(details)
-
-            if success:
-                next = flask.request.args.get("next")
-                if not next or not next.startswith("/"):
-                    next = flask.url_for("recruiters.dashboard")
-
-                flask.flash(f"Hello {current_user.firstName}. Welcome back!")
-                return flask.redirect(next)
-
-        # Notify user of invalid credentials
-        flask.flash("You provided invalid credentials. Please try again.")
-
-    return flask.render_template("authentication/recruiter_login.html", form=form)
+    return flask.render_template("authentication/login.html", form=form)
 
 
 # ------------------------------------------------------------------------------
@@ -143,7 +108,7 @@ def applicant_registration():
 
     if form.validate_on_submit():
         details = {
-            "fullName": form.fullName.data,
+            "name": form.name.data,
             "emailAddress": form.emailAddress.data.lower(),
             "phoneNumber": form.phoneNumber.data,
             "password": form.password.data,
@@ -164,7 +129,7 @@ def user_registration():
 
     if form.validate_on_submit():
         details = {
-            "firstName": form.firstName.data,
+            "name": form.name.data,
             "middleName": form.middleName.data,
             "lastName": form.lastName.data,
             "gender": form.gender.data,
@@ -177,7 +142,9 @@ def user_registration():
         flask.flash("Registration successful. Feel free to login.", "success")
         return flask.redirect(flask.url_for("authentication.user_login"))
 
-    return flask.render_template("authentication/user_registration.html", form=form)
+    return flask.render_template(
+        "authentication/user_registration.html", form=form
+    )
 
 
 @authentication.route("/recruiter/register", methods=["GET", "POST"])
@@ -186,7 +153,7 @@ def recruiter_registration():
 
     if form.validate_on_submit():
         details = {
-            "firstName": form.firstName.data,
+            "name": form.name.data,
             "middleName": form.middleName.data,
             "lastName": form.lastName.data,
             "gender": form.gender.data,
@@ -237,78 +204,48 @@ def recruiter_logout():
 # ------------------------------------------------------------------------------
 #                           PASSWORD RESET REQUEST                            -
 # ------------------------------------------------------------------------------
-@authentication.route("/applicant/password-reset-request", methods=["GET", "POST"])
-def applicant_password_reset_request():
+@authentication.route("/password-reset-request", methods=["GET", "POST"])
+def password_reset_request():
     if flask.request.method == "POST":
-        # Retrieve applicant
-        email_address = flask.request.form["email"]
-        applicant = Applicant.query.filter_by(
-            emailAddress=email_address
-        ).first()
+        # Retrieve the email address from the form
+        email_address = flask.request.form["email"].lower()
 
-        # Check if applicant exists
-        if applicant:
-            # Send password reset email
-            applicant.sendPasswordResetEmail()
-
-            # Flash success message
-            flask.flash("Password reset email sent successfully")
-            return flask.redirect(
-                flask.url_for("authentication.applicant_password_reset_request")
-            )
-
-        # Flash error message
-        flask.flash("The provided email address is invalid", "failure")
-
-    return flask.render_template("authentication/password_reset_request.html")
-
-
-@authentication.route("/user/password-reset-request", methods=["GET", "POST"])
-def user_password_reset_request():
-    if flask.request.method == "POST":
-        # Retrieve user
-        email_address = flask.request.form["email"]
+        # Try to find the user in any of the user tables (User, Applicant,
+        # Recruiter)
         user = User.query.filter_by(emailAddress=email_address).first()
+        applicant = (
+            Applicant.query.filter_by(emailAddress=email_address).first()
+            if not user
+            else None
+        )
+        recruiter = (
+            Recruiter.query.filter_by(emailAddress=email_address).first()
+            if not (user or applicant)
+            else None
+        )
 
-        # Check if user exists
+        # If a user of any type is found, send the password reset email
         if user:
-            # Send password reset email
             user.sendPasswordResetEmail()
-
-            # Flash success message
-            flask.flash("Password reset email sent successfully")
+            flask.flash("Password reset email sent successfully.")
             return flask.redirect(
-                flask.url_for("authentication.user_password_reset_request")
+                flask.url_for("authentication.password_reset_request")
             )
-
-        # Flash error message
-        flask.flash("The provided email address is invalid", "failure")
-
-    return flask.render_template("authentication/password_reset_request.html")
-
-
-@authentication.route("/recruiter/password-reset-request", methods=["GET", "POST"])
-def recruiter_password_reset_request():
-    if flask.request.method == "POST":
-        # Retrieve recruiter
-        email_address = flask.request.form["email"]
-        recruiter = Recruiter.query.filter_by(
-            emailAddress=email_address
-        ).first()
-
-        # Check if recruiter exists
-        if recruiter:
-            # Send password reset email
+        elif applicant:
+            applicant.sendPasswordResetEmail()
+            flask.flash("Password reset email sent successfully.")
+            return flask.redirect(
+                flask.url_for("authentication.password_reset_request")
+            )
+        elif recruiter:
             recruiter.sendPasswordResetEmail()
-
-            # Flash success message
-            flask.flash("Password reset email sent successfully")
+            flask.flash("Password reset email sent successfully.")
             return flask.redirect(
-                flask.url_for("authentication.applicant_password_reset_request")
+                flask.url_for("authentication.password_reset_request")
             )
 
-        # Flash error message
-        flask.flash("The provided email address is invalid", "failure")
+        # If no user is found, flash an error message
+        flask.flash("The provided email address is invalid.", "failure")
 
     return flask.render_template("authentication/password_reset_request.html")
 
@@ -316,7 +253,9 @@ def recruiter_password_reset_request():
 # -----------------------------------------------------------------------------
 #                               PASSWORD RESET                              -
 # -----------------------------------------------------------------------------
-@authentication.route("/applicant/password-reset/<token>", methods=["GET", "POST"])
+@authentication.route(
+    "/applicant/password-reset/<token>", methods=["GET", "POST"]
+)
 def applicant_password_reset(token):
     # Functionality limited to stranded applicants
     if not current_user.is_anonymous:
@@ -331,12 +270,16 @@ def applicant_password_reset(token):
         # Handle successful reset
         if successful:
             flask.flash("Password updated successfully")
-            return flask.redirect(flask.url_for("authentication.applicant_login"))
+            return flask.redirect(
+                flask.url_for("authentication.applicant_login")
+            )
 
         # Flash failure message
         flask.flash("The link you used is either expired or corrupted")
 
-    return flask.render_template("authentication/password_reset.html", form=form)
+    return flask.render_template(
+        "authentication/password_reset.html", form=form
+    )
 
 
 @authentication.route("/user/password-reset/<token>", methods=["GET", "POST"])
@@ -358,10 +301,14 @@ def user_password_reset(token):
 
         # Flash failure message
         flask.flash("The link you used is either expired or corrupted")
-    return flask.render_template("authentication/password_reset.html", form=form)
+    return flask.render_template(
+        "authentication/password_reset.html", form=form
+    )
 
 
-@authentication.route("/recruiter/password-reset/<token>", methods=["GET", "POST"])
+@authentication.route(
+    "/recruiter/password-reset/<token>", methods=["GET", "POST"]
+)
 def recruiter_password_reset(token):
     # Functionality limited to stranded recruiters
     if not current_user.is_anonymous:
@@ -376,11 +323,15 @@ def recruiter_password_reset(token):
         # Handle successful reset
         if successful:
             flask.flash("Password updated successfully")
-            return flask.redirect(flask.url_for("authentication.recruiter_login"))
+            return flask.redirect(
+                flask.url_for("authentication.recruiter_login")
+            )
 
         # Flash failure message
         flask.flash("The link you used is either expired or corrupted")
-    return flask.render_template("authentication/password_reset.html", form=form)
+    return flask.render_template(
+        "authentication/password_reset.html", form=form
+    )
 
 
 # -----------------------------------------------------------------------------
@@ -463,7 +414,9 @@ def user_confirm(user_id, token):
 def resend_confirmation_link_recruiter():
     current_user.sendConfirmationEmail()
     flask.flash("A new confirmation email has been sent to you via email")
-    return flask.redirect(flask.url_for("authentication.unconfirmed_recruiter"))
+    return flask.redirect(
+        flask.url_for("authentication.unconfirmed_recruiter")
+    )
 
 
 @authentication.route("/unconfirmed/recruiter")

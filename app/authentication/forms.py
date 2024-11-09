@@ -18,36 +18,6 @@ from ..models import User
 from utilities.form_fields import TelephoneField
 
 
-class ApplicantLoginForm(FlaskForm):
-    emailAddress = StringField(
-        "Enter your email address",
-        validators=[DataRequired(), Length(1, 128), Email()],
-        render_kw={"placeholder": "Enter your email address here"},
-    )
-    password = PasswordField(
-        "Password",
-        validators=[DataRequired()],
-        render_kw={"placeholder": "Enter password"},
-    )
-    remember_me = BooleanField("Keep me logged in")
-    submit = SubmitField("Login")
-
-
-class RecruiterLoginForm(FlaskForm):
-    emailAddress = StringField(
-        "Enter your email address",
-        validators=[DataRequired(), Length(1, 128), Email()],
-        render_kw={"placeholder": "Enter your email address here"},
-    )
-    password = PasswordField(
-        "Password",
-        validators=[DataRequired()],
-        render_kw={"placeholder": "Enter password"},
-    )
-    remember_me = BooleanField("Keep me logged in")
-    submit = SubmitField("Login")
-
-
 class UserLoginForm(FlaskForm):
     emailAddress = StringField(
         "Enter your email address",
