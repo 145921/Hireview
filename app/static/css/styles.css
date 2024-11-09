@@ -1,0 +1,110 @@
+/* Colors and Basic Styling */
+:root {
+	--dark-blue: #1a1a4f;
+	--light-blue: #007bff;
+	--text-light: #ffffff;
+	--text-gray: #f5f5f5;
+}
+
+body {
+	color: var(--dark-blue);
+	font-size: 1.1rem;
+	font-family: Arial, sans-serif;
+}
+
+.navbar, footer {
+	background-color: var(--dark-blue);
+	color: var(--text-light);
+	font-size: 1.1rem;
+}
+
+.btn-primary {
+	background-color: var(--light-blue);
+	border: none;
+	font-size: 1.1rem;
+}
+
+.btn-primary:hover {
+	background-color: #0056b3;
+}
+
+.hero {
+	height: 100vh;
+	background: url('/static/img/home.jpg') no-repeat center center/cover;
+	color: var(--text-light);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+.hero h1 {
+	font-size: 3.5rem;
+	font-weight: bold;
+}
+
+.hero p {
+	font-size: 1.4rem;
+}
+
+.card {
+	background-color: var(--dark-blue);
+	border: none;
+	color: var(--text-light);
+	border-radius: 10px;
+}
+
+.card img {
+	border-radius: 10px 10px 0 0;
+}
+
+.card h3 {
+	font-weight: 300;
+	padding-bottom: 10px;
+}
+
+.card p {
+}
+
+h2.display-6 {
+	font-size: 2.2rem;
+	font-weight: 700;
+}
+
+.footer-links a {
+	color: var(--text-gray);
+	text-decoration: none;
+	margin: 0 10px;
+	font-size: 1.1rem;
+}
+
+.footer-links a:hover {
+	color: var(--light-blue);
+}
+
+.highlighted-section {
+	background-color: #262673;
+	padding: 60px 0;
+	color: var(--text-gray);
+}
+
+/* Increase spacing for readability */
+.section-padding {
+	padding: 50px 0;
+}
+
+/* Custom responsive adjustments */
+@media (max-width: 576px) {
+    .sign-up-nav,
+    .sign-in-nav {
+        margin: 8px 0;
+    }
+}
+
+@media (min-width: 576px) {
+    .sign-up-nav,
+    .sign-in-nav {
+        margin: 0 8px;
+    }
+}
+
