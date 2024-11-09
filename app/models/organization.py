@@ -23,9 +23,11 @@ class Organization(db.Model):
     )
 
     # Relationships
-    recruiter = relationship("Recruiter", back_populates="organization")
+    recruiter = relationship("Recruiter", back_populates="organizations")
     job_listings = relationship(
-        "JobListing", backref="organization", cascade="all, delete-orphan"
+        "JobListing",
+        back_populates="organization",
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self) -> str:

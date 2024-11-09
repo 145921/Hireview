@@ -34,6 +34,9 @@ class JobListing(db.Model):
     organization = db.relationship(
         "Organization", back_populates="job_listings"
     )
+    applications = db.relationship(
+        "Application", back_populates="job_listing"
+    )
 
     def __repr__(self) -> str:
         return (

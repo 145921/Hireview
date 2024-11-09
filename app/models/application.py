@@ -42,8 +42,8 @@ class Application(db.Model):
     )
 
     # Relationships
-    job_listing = db.relationship("JobListing", backref="applications")
-    applicant = db.relationship("Applicant", backref="applications")
+    job_listing = db.relationship("JobListing", back_populates="applications")
+    applicant = db.relationship("Applicant", back_populates="applications")
 
     def __repr__(self) -> str:
         return (
