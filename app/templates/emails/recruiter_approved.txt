@@ -1,0 +1,8 @@
+Subject: Your Hireview Account has been Approved!
+
+Hello {{ recruiter.name }},
+
+Your Hireview account has been approved, and you can now access the platform to post jobs and manage applications.
+
+Best Regards,
+The Hireview Team

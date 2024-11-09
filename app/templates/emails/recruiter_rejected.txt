@@ -1,0 +1,8 @@
+Subject: Your Hireview Account Status
+
+Hello {{ recruiter.name }},
+
+Unfortunately, your Hireview account application has been rejected. For any questions, please contact our support team.
+
+Best Regards,
+The Hireview Team

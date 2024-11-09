@@ -1,0 +1,10 @@
+Subject: Job Application Update: {{ job.title }}
+
+Hello {{ applicant.name }},
+
+We appreciate your interest in the "{{ job.title }}" position at {{ organization.name }}. After careful consideration, we have chosen another candidate for this role. 
+
+Thank you for applying, and we encourage you to explore other opportunities on Hireview.
+
+Best Regards,
+The Hireview Team

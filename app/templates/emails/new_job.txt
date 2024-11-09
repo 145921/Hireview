@@ -1,0 +1,14 @@
+Subject: New Job Available: {{ job.title }}
+
+Hello {{ applicant.name }},
+
+A new job listing titled "{{ job.title }}" is now available on Hireview. Here are the details:
+
+- Position: {{ job.position }}
+- Location: {{ job.location }}
+- Application Deadline: {{ job.deadline }}
+
+Visit Hireview to apply for this exciting opportunity.
+
+Best Regards,
+The Hireview Team

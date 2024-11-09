@@ -1,0 +1,12 @@
+{% extends "base_email.html" %}
+
+{% block content %}
+<p>Hello {{ applicant.name }},</p>
+<p>A new job listing titled "<strong>{{ job.title }}</strong>" is now available on Hireview. Here are the details:</p>
+<ul>
+    <li><strong>Position:</strong> {{ job.position }}</li>
+    <li><strong>Location:</strong> {{ job.location }}</li>
+    <li><strong>Application Deadline:</strong> {{ job.deadline }}</li>
+</ul>
+<p>Visit Hireview to apply for this exciting opportunity.</p>
+{% endblock %}

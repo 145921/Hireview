@@ -1,0 +1,12 @@
+Subject: Confirm Your Email Address
+
+Hello {{ user.name }},
+
+Thank you for registering with Hireview. To complete your registration, please confirm your email address by clicking the link below:
+
+{{ confirmation_link }}
+
+If you did not sign up, please ignore this email.
+
+Best Regards,
+The Hireview Team

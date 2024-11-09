@@ -1,0 +1,8 @@
+Subject: Your Hireview Account has been Reactivated
+
+Hello {{ recruiter.name }},
+
+We’re happy to inform you that your Hireview account has been reactivated. You can now access your account as usual.
+
+Best Regards,
+The Hireview Team

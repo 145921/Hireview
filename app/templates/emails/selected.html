@@ -1,0 +1,7 @@
+{% extends "base_email.html" %}
+
+{% block content %}
+<p>Hello {{ applicant.name }},</p>
+<p>We are pleased to inform you that you have been selected for the job position "<strong>{{ job.title }}</strong>" at {{ organization.name }}. We will contact you soon with further details.</p>
+<p>Congratulations and best wishes!</p>
+{% endblock %}

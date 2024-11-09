@@ -1,0 +1,10 @@
+Subject: Congratulations, You've Been Selected!
+
+Hello {{ applicant.name }},
+
+We are pleased to inform you that you have been selected for the job position "{{ job.title }}" at {{ organization.name }}. We will contact you soon with further details.
+
+Congratulations and best wishes!
+
+Best Regards,
+The Hireview Team
