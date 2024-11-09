@@ -34,7 +34,7 @@ class UserLoginForm(FlaskForm):
 
 
 class ApplicantRegistrationForm(FlaskForm):
-    fullName = StringField(
+    name = StringField(
         "Enter your full name", validators=[DataRequired(), Length(1, 110)]
     )
     emailAddress = StringField(
@@ -59,10 +59,10 @@ class ApplicantRegistrationForm(FlaskForm):
         },
     )
     consent = BooleanField(
-        "I agree to all statements in Terms of service",
+        "I agree to the Terms and Conditions",
         validators=[DataRequired()],
     )
-    submit = SubmitField("Register")
+    submit = SubmitField("Create Account")
 
     def validate_emailAddress(self, field):
         if Applicant.query.filter_by(emailAddress=field.data.lower()).first():
@@ -70,12 +70,9 @@ class ApplicantRegistrationForm(FlaskForm):
 
 
 class RecruiterRegistrationForm(FlaskForm):
-    # Personal details
-    firstName = StringField(
-        "Enter first name", validators=[DataRequired(), Length(1, 50)]
+    name = StringField(
+        "Enter your full name", validators=[DataRequired(), Length(1, 110)]
     )
-    middleName = StringField("Enter middle name", validators=[Length(0, 50)])
-    lastName = StringField("Enter last name", validators=[Length(0, 50)])
     gender = SelectField(
         "Select your gender",
         choices=[("Female", "Female"), ("Male", "Male")],
