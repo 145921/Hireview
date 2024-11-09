@@ -3,7 +3,7 @@ from flask_login import current_user
 from flask_login import login_required
 
 
-from . import accounts
+from . import authentication
 from .forms import UserLoginForm
 from .forms import ApplicantLoginForm
 from .forms import RecruiterLoginForm
@@ -12,7 +12,7 @@ from .forms import UserRegistrationForm
 from .forms import ApplicantRegistrationForm
 from .forms import RecruiterRegistrationForm
 
-from ..models import db
+from app import db
 from ..models import User
 from ..models import Applicant
 from ..models import Recruiter
@@ -23,7 +23,7 @@ from utilities.authentication import user_type_validator
 # ------------------------------------------------------------------------------
 #                                 SIGNING IN                                  -
 # ------------------------------------------------------------------------------
-@accounts.route("/user/login", methods=["GET", "POST"])
+@authentication.route("/user/login", methods=["GET", "POST"])
 def user_login():
     # Limit functionality to Anonymous Users
     if current_user.is_authenticated:
@@ -57,10 +57,10 @@ def user_login():
         # Notify user of invalid credentials
         flask.flash("You provided invalid credentials. Please try again.")
 
-    return flask.render_template("accounts/user_login.html", form=form)
+    return flask.render_template("authentication/user_login.html", form=form)
 
 
-@accounts.route("/applicant/login", methods=["GET", "POST"])
+@authentication.route("/applicant/login", methods=["GET", "POST"])
 def applicant_login():
     # Limit functionality to Anonymous Users
     if current_user.is_authenticated:
@@ -94,10 +94,10 @@ def applicant_login():
         # Notify user of invalid credentials
         flask.flash("You provided invalid credentials. Please try again.")
 
-    return flask.render_template("accounts/applicant_login.html", form=form)
+    return flask.render_template("authentication/applicant_login.html", form=form)
 
 
-@accounts.route("/recruiter/login", methods=["GET", "POST"])
+@authentication.route("/recruiter/login", methods=["GET", "POST"])
 def recruiter_login():
     # Limit functionality to Anonymous Users
     if current_user.is_authenticated:
@@ -131,13 +131,13 @@ def recruiter_login():
         # Notify user of invalid credentials
         flask.flash("You provided invalid credentials. Please try again.")
 
-    return flask.render_template("accounts/recruiter_login.html", form=form)
+    return flask.render_template("authentication/recruiter_login.html", form=form)
 
 
 # ------------------------------------------------------------------------------
 #                                REGISTRATION                                 -
 # ------------------------------------------------------------------------------
-@accounts.route("/applicant/register", methods=["GET", "POST"])
+@authentication.route("/applicant/register", methods=["GET", "POST"])
 def applicant_registration():
     form = ApplicantRegistrationForm()
 
@@ -151,14 +151,14 @@ def applicant_registration():
         Applicant.registerAccount(details)
 
         flask.flash("Registration successful. Feel free to login.", "success")
-        return flask.redirect(flask.url_for("accounts.applicant_login"))
+        return flask.redirect(flask.url_for("authentication.applicant_login"))
 
     return flask.render_template(
-        "accounts/applicant_registration.html", form=form
+        "authentication/applicant_registration.html", form=form
     )
 
 
-@accounts.route("/user/register", methods=["GET", "POST"])
+@authentication.route("/user/register", methods=["GET", "POST"])
 def user_registration():
     form = UserRegistrationForm()
 
@@ -175,12 +175,12 @@ def user_registration():
         User.registerAccount(details)
 
         flask.flash("Registration successful. Feel free to login.", "success")
-        return flask.redirect(flask.url_for("accounts.user_login"))
+        return flask.redirect(flask.url_for("authentication.user_login"))
 
-    return flask.render_template("accounts/user_registration.html", form=form)
+    return flask.render_template("authentication/user_registration.html", form=form)
 
 
-@accounts.route("/recruiter/register", methods=["GET", "POST"])
+@authentication.route("/recruiter/register", methods=["GET", "POST"])
 def recruiter_registration():
     form = RecruiterRegistrationForm()
 
@@ -197,47 +197,47 @@ def recruiter_registration():
         Recruiter.registerAccount(details)
 
         flask.flash("Registration successful. Feel free to login.", "success")
-        return flask.redirect(flask.url_for("accounts.recruiter_login"))
+        return flask.redirect(flask.url_for("authentication.recruiter_login"))
 
     return flask.render_template(
-        "accounts/recruiter_registration.html", form=form
+        "authentication/recruiter_registration.html", form=form
     )
 
 
 # ------------------------------------------------------------------------------
 #                                SIGNING OUT                                  -
 # ------------------------------------------------------------------------------
-@accounts.route("/applicant/logout")
+@authentication.route("/applicant/logout")
 @login_required
 @user_type_validator("applicant")
 def applicant_logout():
     current_user.logout()
     flask.flash("You have been logged out successfully.")
-    return flask.redirect(flask.url_for("accounts.applicant_login"))
+    return flask.redirect(flask.url_for("authentication.applicant_login"))
 
 
-@accounts.route("/user/logout")
+@authentication.route("/user/logout")
 @login_required
 @user_type_validator("user")
 def administrator_logout():
     current_user.logout()
     flask.flash("You have been logged out successfully.")
-    return flask.redirect(flask.url_for("accounts.user_login"))
+    return flask.redirect(flask.url_for("authentication.user_login"))
 
 
-@accounts.route("/recruiter/logout")
+@authentication.route("/recruiter/logout")
 @login_required
 @user_type_validator("recruiter")
 def recruiter_logout():
     current_user.logout()
     flask.flash("You have been logged out successfully.")
-    return flask.redirect(flask.url_for("accounts.recruiter_login"))
+    return flask.redirect(flask.url_for("authentication.recruiter_login"))
 
 
 # ------------------------------------------------------------------------------
 #                           PASSWORD RESET REQUEST                            -
 # ------------------------------------------------------------------------------
-@accounts.route("/applicant/password-reset-request", methods=["GET", "POST"])
+@authentication.route("/applicant/password-reset-request", methods=["GET", "POST"])
 def applicant_password_reset_request():
     if flask.request.method == "POST":
         # Retrieve applicant
@@ -254,16 +254,16 @@ def applicant_password_reset_request():
             # Flash success message
             flask.flash("Password reset email sent successfully")
             return flask.redirect(
-                flask.url_for("accounts.applicant_password_reset_request")
+                flask.url_for("authentication.applicant_password_reset_request")
             )
 
         # Flash error message
         flask.flash("The provided email address is invalid", "failure")
 
-    return flask.render_template("accounts/password_reset_request.html")
+    return flask.render_template("authentication/password_reset_request.html")
 
 
-@accounts.route("/user/password-reset-request", methods=["GET", "POST"])
+@authentication.route("/user/password-reset-request", methods=["GET", "POST"])
 def user_password_reset_request():
     if flask.request.method == "POST":
         # Retrieve user
@@ -278,16 +278,16 @@ def user_password_reset_request():
             # Flash success message
             flask.flash("Password reset email sent successfully")
             return flask.redirect(
-                flask.url_for("accounts.user_password_reset_request")
+                flask.url_for("authentication.user_password_reset_request")
             )
 
         # Flash error message
         flask.flash("The provided email address is invalid", "failure")
 
-    return flask.render_template("accounts/password_reset_request.html")
+    return flask.render_template("authentication/password_reset_request.html")
 
 
-@accounts.route("/recruiter/password-reset-request", methods=["GET", "POST"])
+@authentication.route("/recruiter/password-reset-request", methods=["GET", "POST"])
 def recruiter_password_reset_request():
     if flask.request.method == "POST":
         # Retrieve recruiter
@@ -304,19 +304,19 @@ def recruiter_password_reset_request():
             # Flash success message
             flask.flash("Password reset email sent successfully")
             return flask.redirect(
-                flask.url_for("accounts.applicant_password_reset_request")
+                flask.url_for("authentication.applicant_password_reset_request")
             )
 
         # Flash error message
         flask.flash("The provided email address is invalid", "failure")
 
-    return flask.render_template("accounts/password_reset_request.html")
+    return flask.render_template("authentication/password_reset_request.html")
 
 
 # -----------------------------------------------------------------------------
 #                               PASSWORD RESET                              -
 # -----------------------------------------------------------------------------
-@accounts.route("/applicant/password-reset/<token>", methods=["GET", "POST"])
+@authentication.route("/applicant/password-reset/<token>", methods=["GET", "POST"])
 def applicant_password_reset(token):
     # Functionality limited to stranded applicants
     if not current_user.is_anonymous:
@@ -331,15 +331,15 @@ def applicant_password_reset(token):
         # Handle successful reset
         if successful:
             flask.flash("Password updated successfully")
-            return flask.redirect(flask.url_for("accounts.applicant_login"))
+            return flask.redirect(flask.url_for("authentication.applicant_login"))
 
         # Flash failure message
         flask.flash("The link you used is either expired or corrupted")
 
-    return flask.render_template("accounts/password_reset.html", form=form)
+    return flask.render_template("authentication/password_reset.html", form=form)
 
 
-@accounts.route("/user/password-reset/<token>", methods=["GET", "POST"])
+@authentication.route("/user/password-reset/<token>", methods=["GET", "POST"])
 def user_password_reset(token):
     # Functionality limited to stranded users
     if not current_user.is_anonymous:
@@ -354,14 +354,14 @@ def user_password_reset(token):
         # Handle successful reset
         if successful:
             flask.flash("Password updated successfully")
-            return flask.redirect(flask.url_for("accounts.user_login"))
+            return flask.redirect(flask.url_for("authentication.user_login"))
 
         # Flash failure message
         flask.flash("The link you used is either expired or corrupted")
-    return flask.render_template("accounts/password_reset.html", form=form)
+    return flask.render_template("authentication/password_reset.html", form=form)
 
 
-@accounts.route("/recruiter/password-reset/<token>", methods=["GET", "POST"])
+@authentication.route("/recruiter/password-reset/<token>", methods=["GET", "POST"])
 def recruiter_password_reset(token):
     # Functionality limited to stranded recruiters
     if not current_user.is_anonymous:
@@ -376,17 +376,17 @@ def recruiter_password_reset(token):
         # Handle successful reset
         if successful:
             flask.flash("Password updated successfully")
-            return flask.redirect(flask.url_for("accounts.recruiter_login"))
+            return flask.redirect(flask.url_for("authentication.recruiter_login"))
 
         # Flash failure message
         flask.flash("The link you used is either expired or corrupted")
-    return flask.render_template("accounts/password_reset.html", form=form)
+    return flask.render_template("authentication/password_reset.html", form=form)
 
 
 # -----------------------------------------------------------------------------
 #                           ACCOUNT CONFIRMATION                              -
 # -----------------------------------------------------------------------------
-@accounts.route("/recruiter/confirm/<int:recruiter_id>/<token>")
+@authentication.route("/recruiter/confirm/<int:recruiter_id>/<token>")
 def recruiter_confirm(recruiter_id, token):
     """
     Confirms email address of registered recruiter
@@ -395,7 +395,7 @@ def recruiter_confirm(recruiter_id, token):
 
     :return: Bool - True if successful, False otherwise.
     """
-    template = "accounts/confirmation.html"
+    template = "authentication/confirmation.html"
 
     # Retrieve specified recruiter
     current_user = Recruiter.query.get(recruiter_id)
@@ -413,7 +413,7 @@ def recruiter_confirm(recruiter_id, token):
         return flask.render_template(template, invalid_token=True)
 
 
-@accounts.route("/applicant/confirm/<int:applicant_id>/<token>")
+@authentication.route("/applicant/confirm/<int:applicant_id>/<token>")
 def applicant_confirm(applicant_id, token):
     """Confirms email address of registered applicant"""
     template = "authentication/confirmation.html"
@@ -435,7 +435,7 @@ def applicant_confirm(applicant_id, token):
         return flask.render_template(template, invalid_token=True)
 
 
-@accounts.route("/user/confirm/<int:user_id>/<token>")
+@authentication.route("/user/confirm/<int:user_id>/<token>")
 def user_confirm(user_id, token):
     """Confirms email address of registered user"""
     template = "authentication/confirmation.html"
@@ -457,16 +457,16 @@ def user_confirm(user_id, token):
         return flask.render_template(template, invalid_token=True)
 
 
-@accounts.route("/resend-confirmation-link/recruiter")
+@authentication.route("/resend-confirmation-link/recruiter")
 @login_required
 @user_type_validator("recruiter")
 def resend_confirmation_link_recruiter():
     current_user.sendConfirmationEmail()
     flask.flash("A new confirmation email has been sent to you via email")
-    return flask.redirect(flask.url_for("accounts.unconfirmed_recruiter"))
+    return flask.redirect(flask.url_for("authentication.unconfirmed_recruiter"))
 
 
-@accounts.route("/unconfirmed/recruiter")
+@authentication.route("/unconfirmed/recruiter")
 @login_required
 @user_type_validator("recruiter")
 def unconfirmed_recruiter():
@@ -476,14 +476,14 @@ def unconfirmed_recruiter():
     elif current_user.isConfirmed:
         return flask.redirect(flask.url_for("recruiters.dashboard"))
 
-    return flask.render_template("accounts/unconfirmed.html")
+    return flask.render_template("authentication/unconfirmed.html")
 
 
 # ---------------------------------------------------------------------------
 #                          HANDLE STALE SESSIONS                            -
 # ---------------------------------------------------------------------------
-@accounts.route("/reauthenticate")
+@authentication.route("/reauthenticate")
 @login_required
 def reauthenticate():
     user = flask.session["user_type"]
-    return flask.redirect(flask.url_for(f"accounts.{user}_logout"))
+    return flask.redirect(flask.url_for(f"authentication.{user}_logout"))

@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from wtforms import URLField
 from wtforms import StringField
 from wtforms import TextAreaField
 from wtforms import SubmitField
@@ -10,7 +11,6 @@ from wtforms.validators import Length
 from wtforms.validators import Optional
 from wtforms.validators import URL
 from wtforms.validators import ValidationError
-from wtforms.fields.html5 import URLField
 
 from ..models import Recruiter
 from ..models import Organization

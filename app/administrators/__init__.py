@@ -1,14 +1,14 @@
 from flask import Blueprint
 from flask import current_app
 
-main = Blueprint("main", __name__)
+administrators = Blueprint("administrators", __name__)
 from . import views, errors
 
 
-@main.app_context_processor
+@administrators.app_context_processor
 def global_variables():
     """
-    Provide global variables for templates within the 'main' blueprint.
+    Provide global variables for templates within the 'administrators' blueprint.
 
     :return: A dictionary containing global variables to inject into templates.
     :rtype: dict

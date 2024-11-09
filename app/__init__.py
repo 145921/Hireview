@@ -4,7 +4,6 @@ import flask_moment
 import flask_mailman
 import flask_bootstrap
 import flask_sqlalchemy
-import flask_jwt_extended
 
 from config import config
 
@@ -49,7 +48,6 @@ def load_user(user_id):
 
 
 db = flask_sqlalchemy.SQLAlchemy()
-jwt = flask_jwt_extended.JWTManager()
 mail = flask_mailman.Mail()
 bootstrap = flask_bootstrap.Bootstrap()
 moment = flask_moment.Moment()
@@ -70,7 +68,6 @@ def create_app(config_name="default"):
     # Initialize extensions
     db.init_app(app)
     login_manager.init_app(app)
-    jwt.init_app(app)
     mail.init_app(app)
     bootstrap.init_app(app)
     moment.init_app(app)
