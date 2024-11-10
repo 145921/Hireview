@@ -295,8 +295,14 @@ transition: all 0.3s; }
 	background-color: #1a1a4f;
 	color: #ffffff;
 	font-weight: bold;
+	font-size: 0.9rem;
 	text-transform: uppercase;
 }
+
+.table tbody tr {
+	font-size: 1rem;
+}
+
 .table-hover tbody tr:hover {
 	background-color: #e2e6ea;
 }
@@ -308,20 +314,42 @@ transition: all 0.3s; }
 	border-radius: 20px;
 }
 .btn-custom-primary {
-    background-color: #003366;
-    color: #ffffff;
-    border: none;
-    padding: 7px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+	background-color: #003366;
+	color: #ffffff;
+	border: none;
+	padding: 7px;
+	border-radius: 5px;
+	transition: background-color 0.3s;
 }
 
 .btn-custom-primary:hover {
-    background-color: #00224e;
-    color: #ffffff;
+	background-color: #00224e;
+	color: #ffffff;
 }
-        .form-label {
-            font-weight: 500;
-            color: #1a1a4f;
-	    font-size: 1rem;
-        }
+.form-label {
+	font-weight: 500;
+	color: #1a1a4f;
+	font-size: 1rem;
+}
+.modal-title {
+	color: #ffffff;
+}
+.modal-content {
+	font-size: 1rem;
+	border-radius: 15px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+	background-color: #1a1a4f;
+	color: #ffffff;
+	border-top-left-radius: 15px;
+	border-top-right-radius: 15px;
+}
+
+.modal-footer {
+	background-color: #f1f1f1;
+	border-bottom-left-radius: 15px;
+	border-bottom-right-radius: 15px;
+}
+

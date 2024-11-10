@@ -49,15 +49,33 @@ def register_organization():
     )
 
 
-@recruiters.route("/organization/<int:org_id>/update", methods=["GET", "POST"])
+@recruiters.route(
+    "/organization/<int:organization_id>/update", methods=["GET", "POST"]
+)
 @login_required
-def update_organization(org_id):
-    organization = Organization.query.get_or_404(org_id)
+def update_organization(organization_id):
+    # Retrieve organization record
+    organization = Organization.query.get_or_404(organization_id)
+
+    # Instantialize Update Form
     form = OrganizationForm(obj=organization)
+
     if form.validate_on_submit():
+        # Retrieve forms details
+        details = {
+            "name": form.name.data,
+            "description": form.description.data,
+            "location": form.location.data,
+            "employees": form.employees.data,
+        }
+
         # Update organization profile
+        organization.update(details)
+
+        # Render success message
         flask.flash("Organization profile updated.", "success")
         return flask.redirect(flask.url_for("recruiters.dashboard"))
+
     return flask.render_template(
         "recruiters/update_organization.html",
         form=form,
@@ -65,12 +83,41 @@ def update_organization(org_id):
     )
 
 
-@recruiters.route("/organization/<int:org_id>/delete", methods=["POST"])
+@recruiters.route(
+    "/organization/<int:organization_id>/delete", methods=["POST"]
+)
 @login_required
-def delete_organization(org_id):
-    # Delete organization profile
-    flask.flash("Organization profile deleted.", "info")
+def delete_organization(organization_id):
+    # Retrieve organization record
+    organization = Organization.query.filter_by(
+        organizationId=organization_id
+    ).first_or_404()
+
+    # Delete organization record
+    success = organization.delete()
+
+    # Render success message
+    if success:
+        flask.flash("Organization deleted successfully.", "info")
+
+    else:
+        flask.flash(
+            "An error occurred while deleting the organization record",
+            "warning",
+        )
+
     return flask.redirect(flask.url_for("recruiters.dashboard"))
+
+
+@recruiters.route("/organization/<int:organization_id>/jobs", methods=["GET"])
+@login_required
+def view_organization(organization_id):
+    organization = Organization.query.filter_by(
+        organizationId=organization_id
+    ).first_or_404()
+    return flask.render_template(
+        "recruiters/view_organization.html", organization=organization
+    )
 
 
 @recruiters.route("/jobs", methods=["GET"])

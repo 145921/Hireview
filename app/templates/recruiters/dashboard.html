@@ -22,10 +22,33 @@ Dashboard
         <td>{{ organization.location }}</td>
         <td>{{ organization.job_listings | length }}</td>
         <td>
-          <button class="btn btn-sm btn-primary">View</button>
-          <button class="btn btn-sm btn-secondary">Edit</button>
+          <a href="{{ url_for('recruiters.view_organization', organization_id=organization.organizationId) }}" class="btn btn-primary">View</a>
+          <a href="{{ url_for('recruiters.update_organization', organization_id=organization.organizationId) }}" class="btn btn-secondary">Edit</a>
+          <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteOrganization{{ loop.index }}Modal">
+            Delete
+          </button>
         </td>
       </tr>
+      <!-- Delete organization modal -->
+      <div class="modal fade" id="deleteOrganization{{ loop.index }}Modal" tabindex="-1" aria-labelledby="deleteOrganization{{ loop.index }}ModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteOrganization{{ loop.index }}ModalLabel">Delete Organization</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to delete this organization? (Warning: If the organization has any existing jobs, they will all be irreversibly deleted)
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <form action="{{ url_for('recruiters.delete_organization', organization_id=organization.organizationId) }}" method="post">
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
       {% endfor %}
     </tbody>
   </table>
