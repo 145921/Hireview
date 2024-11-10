@@ -9,6 +9,19 @@ from .forms import OrganizationForm
 from ..models import Applicant
 from ..models import JobListing
 from ..models import Organization
+from utilities.authentication import email_confirmation_required
+
+
+@recruiters.before_request
+@email_confirmation_required
+def restrict_unconfirmed():
+    pass
+
+
+@recruiters.route("/dashboard")
+@login_required
+def dashboard():
+    return flask.render_template("recruiters/dashboard.html")
 
 
 @recruiters.route("/organization/register", methods=["GET", "POST"])

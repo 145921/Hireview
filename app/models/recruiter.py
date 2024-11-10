@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 
 import flask
 import flask_login
@@ -17,7 +16,7 @@ from utilities.email_utils import send_email
 from utilities.securities import get_gravatar_hash
 
 
-class Recruiter(db.Model):
+class Recruiter(flask_login.UserMixin, db.Model):
     """
     Model representing a Recruiter who posts job listings.
     """
@@ -71,19 +70,14 @@ class Recruiter(db.Model):
             name=details.get("name"),
             emailAddress=details.get("emailAddress"),
             phoneNumber=details.get("phoneNumber"),
-            password=details.get("passwordHash"),
+            password=details.get("password"),
+            nationality=details.get("nationality"),
         )
         db.session.add(recruiter)
         db.session.commit()
 
-        # Send confirm email
-        subject = "Account Setup Information"
-        send_email(
-            [recruiter.emailAddress],
-            subject,
-            "email/confirm_email",
-            user=recruiter,
-        )
+        # Send confirmation email
+        recruiter.sendConfirmationEmail()
 
         return recruiter
 
@@ -137,9 +131,9 @@ class Recruiter(db.Model):
         if self.verifyPassword(details.get("password", "")):
             flask_login.login_user(self, details.get("rerecruiter_me", False))
 
-            # Mark them as online
-            self.lastSeen = None
-            db.session.commit()
+            # Set user type session variable
+            flask.session.permanent = True
+            flask.session["user_type"] = "recruiter"
 
             return (1, "Login Successful")
 
@@ -153,10 +147,6 @@ class Recruiter(db.Model):
         """
         # Logout user
         flask_login.logout_user()
-
-        # Update their last seen
-        self.lastSeen = datetime.utcnow()
-        db.session.commit()
 
         return (1, "Logout successful")
 
@@ -376,3 +366,53 @@ class Recruiter(db.Model):
         return "{url}/{hash}?s={size}&d={default}&r={rating}".format(
             url=url, hash=hash, size=size, default=default, rating=rating
         )
+
+    def sendConfirmationEmail(self):
+        """
+        Send confirmation email to the recruiter.
+        """
+        token = self.generateConfirmationToken()
+        confirmation_link = url_for(
+            "authentication.recruiter_confirm",
+            token=token,
+            recruiter_id=self.recruiterId,
+            _scheme="http",
+            _external=True,
+        )
+
+        subject = "Confirm Your Email"
+        send_email(
+            [self.emailAddress],
+            subject,
+            "email/email_confirmation",
+            user=self,
+            confirmation_link=confirmation_link,
+        )
+
+    def confirm(self, token, expiration=3600):
+        """
+        Confirm user's email.
+
+        This method uses a token to confirm the user's email address.
+
+        :return: bool - True if confirmation is successful, False otherwise.
+        """
+        serializer = Serializer(flask.current_app.config["SECRET_KEY"])
+
+        try:
+            data = serializer.loads(token, max_age=expiration)
+
+        except Exception:
+            return False
+
+        # Ensure that the link is not corrupted
+        if data != self.emailAddress:
+            return False
+
+        # Update confirm status
+        self.isConfirmed = True
+
+        db.session.add(self)
+        db.session.commit()
+
+        return True

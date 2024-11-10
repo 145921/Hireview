@@ -9,18 +9,13 @@ from config import config
 
 # Set endpoint for the login page
 login_manager = flask_login.LoginManager()
-login_manager.blueprint_login_views = {
-    "administrators": "authentication.administrator_login",
-    "applicants": "authentication.applicant_login",
-    "recruiters": "authentication.recruiter_login",
-    "authentication": "authentication.applicant_login",
-    "main": "authentication.applicant_login",
-}
+login_manager.login_view = "authentication.login"
 
 # Handle stale sessions
 login_manager.refresh_view = "authentication.reauthenticate"
 login_manager.needs_refresh_message = (
-    "To protect your authentication, please reauthenticate to access this page."
+    "To protect your authentication, "
+    + "please reauthenticate to access this page."
 )
 login_manager.needs_refresh_message_category = "info"
 
@@ -85,7 +80,9 @@ def create_app(config_name="default"):
 
     from .authentication import authentication as authentication_blueprint
 
-    app.register_blueprint(authentication_blueprint, url_prefix="/authentication")
+    app.register_blueprint(
+        authentication_blueprint, url_prefix="/authentication"
+    )
 
     from .applicants import applicants as applicants_blueprint
 

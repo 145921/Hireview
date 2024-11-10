@@ -1,3 +1,4 @@
+{% import "utilities.html" as utilities %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -28,15 +29,15 @@
           <button type="button" id="sidebarCollapse" class="btn btn-primary">
           </button>
         </div>
-        <div class="img bg-wrap text-center py-4" style="background-image: url(/static/img/bg_1.jpg);">
+        <div class="img bg-wrap text-center py-4" style="background-image: url(/static/img/background.jpg);">
           <div class="user-logo">
             <div class="img" style="background-image: url(/static/img/background.jpg);"></div>
-            <h3>Catriona Henderson</h3>
+            <h3>{{ current_user.name }}</h3>
           </div>
         </div>
         <ul class="list-unstyled components mb-5">
           <li class="active">
-            <a href="#"><span class="fa fa-home mr-3"></span> Home</a>
+            <a href="/"><span class="fa fa-home mr-3"></span> Home</a>
           </li>
           <li>
             <a href="#"><span class="fa fa-download mr-3 notif"><small class="d-flex align-items-center justify-content-center">5</small></span> Download</a>
@@ -61,6 +62,7 @@
       </nav>
 
       <div id="content" class="p-4 p-md-5 pt-5">
+        {{ current_user }}
         {% block content %}
         {% with messages = get_flashed_messages(with_categories = true) %}
         {% if messages %}

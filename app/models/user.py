@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 
 import flask
 import flask_login
@@ -17,7 +16,7 @@ from utilities.email_utils import send_email
 from utilities.securities import get_gravatar_hash
 
 
-class User(db.Model):
+class User(flask_login.UserMixin, db.Model):
     """
     Model representing a User in the system.
     """
@@ -109,18 +108,18 @@ class User(db.Model):
         """
         Logs in the user and marks them as online.
 
-        :param details: dict - Contains password and reuser_me boolean
+        :param details: dict - Contains password and remember_me boolean
         variable
 
         :return: tuple - Contains the return status and return message.
         """
 
         if self.verifyPassword(details.get("password", "")):
-            flask_login.login_user(self, details.get("reuser_me", False))
+            flask_login.login_user(self, details.get("remember_me", False))
 
-            # Mark them as online
-            self.lastSeen = None
-            db.session.commit()
+            # Set user type session variable
+            flask.session.permanent = True
+            flask.session["user_type"] = "user"
 
             return (1, "Login Successful")
 
@@ -134,10 +133,6 @@ class User(db.Model):
         """
         # Logout user
         flask_login.logout_user()
-
-        # Update their last seen
-        self.lastSeen = datetime.utcnow()
-        db.session.commit()
 
         return (1, "Logout successful")
 

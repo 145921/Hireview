@@ -78,7 +78,9 @@ class RecruiterRegistrationForm(FlaskForm):
         choices=[("Female", "Female"), ("Male", "Male")],
         validators=[DataRequired()],
     )
-
+    nationality = SelectField(
+        "Select your nationality", validators=[DataRequired()]
+    )
     # Contact details
     emailAddress = StringField(
         "Enter your email address",

@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 
 import flask
 import flask_login
@@ -17,7 +16,7 @@ from utilities.email_utils import send_email
 from utilities.securities import get_gravatar_hash
 
 
-class Applicant(db.Model):
+class Applicant(flask_login.UserMixin, db.Model):
     """
     Model representing an Applicant who can apply for job listings.
     """
@@ -155,9 +154,9 @@ class Applicant(db.Model):
         if self.verifyPassword(details.get("password", "")):
             flask_login.login_user(self, details.get("reapplicant_me", False))
 
-            # Mark them as online
-            self.lastSeen = None
-            db.session.commit()
+            # Set user type session variable
+            flask.session.permanent = True
+            flask.session["user_type"] = "applicant"
 
             return (1, "Login Successful")
 
@@ -171,10 +170,6 @@ class Applicant(db.Model):
         """
         # Logout user
         flask_login.logout_user()
-
-        # Update their last seen
-        self.lastSeen = datetime.utcnow()
-        db.session.commit()
 
         return (1, "Logout successful")
 

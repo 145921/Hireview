@@ -1,0 +1,39 @@
+.custom-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 70vh;
+	padding: 20px;
+}
+.card {
+	background-color: #0A1F44;
+	border: none;
+	border-radius: 12px;
+	padding: 40px;
+	max-width: 500px;
+	text-align: center;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.card h2 {
+	color: #F1F5FA;
+}
+.btn-resend {
+	background-color: #FFA726;
+	color: #FFFFFF;
+	border: none;
+	padding: 10px 20px;
+	font-size: 1.1em;
+	border-radius: 8px;
+	margin-top: 20px;
+	transition: background-color 0.3s ease;
+}
+.btn-resend:hover {
+	background-color: #FB8C00;
+	color: #ffffff;
+	font-weight: bold;
+}
+.card p {
+	color: #F1F5FA;
+	margin-top: 10px;
+}

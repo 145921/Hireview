@@ -45,15 +45,15 @@
     {% endblock navbar %}
 
     {% block content %}
-    {% with messages = get_flashed_messages(with_categories = true) %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1050;">
       {% for category, message in messages %}
       {% set category = utilities.category_mapping.get(category, 'info') %}
-      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true">
-        <div class="toast-header bg-{{ category }}">
-          <strong class="me-auto text-white">{{ category|capitalize }}</strong>
-          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      <div class="toast mb-3" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true">
+        <div class="toast-header bg-{{ category }}-lighter text-white">
+          <strong class="me-auto">{{ category|capitalize }}</strong>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
         <div class="toast-body">
           {{ message }}
@@ -64,8 +64,8 @@
     {% endif %}
     {% endwith %}
     {% block page_content %}
-    {% endblock page_content %}
-    {% endblock content %}
+    {% endblock %}
+    {% endblock %}
 
     {% block footer %}
     <footer class="py-4">

@@ -7,7 +7,7 @@ Login
 <link rel="stylesheet" href="/static/css/forms.css">
 <section class="form-container">
   <h2>Login to Hireview</h2>
-  <form id="login-form" action="" method="POST">
+  <form id="login-form" action="{{ url_for('authentication.login') }}" method="POST">
     {{ form.hidden_tag() }}
     <div class="mb-3">
       {{ form.emailAddress.label(class="form-label") }}
