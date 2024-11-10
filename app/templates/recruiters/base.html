@@ -1,0 +1,18 @@
+{% extends "dashboard_base.html" %}
+{% block navbar %}
+<li>
+  <a href="{{ url_for('recruiters.register_organization') }}"><span class="fa fa-sign-out mr-3"></span> Register Organization</a>
+</li>
+<li>
+  <a href="{{ url_for('recruiters.dashboard') }}"><span class="fa fa-sign-out mr-3"></span> View Organizations</a>
+</li>
+<li>
+  <a href="{{ url_for('recruiters.list_jobs') }}"><span class="fa fa-sign-out mr-3"></span> View Jobs</a>
+</li>
+<li>
+  <a href="{{ url_for('authentication.logout') }}"><span class="fa fa-sign-out mr-3"></span> Update Profile</a>
+</li>
+<li>
+  <a href="{{ url_for('authentication.logout') }}"><span class="fa fa-sign-out mr-3"></span> View Profile</a>
+</li>
+{% endblock %}

@@ -410,7 +410,7 @@ class Recruiter(flask_login.UserMixin, db.Model):
             return False
 
         # Update confirm status
-        self.isConfirmed = True
+        self.isVerified = True
 
         db.session.add(self)
         db.session.commit()
