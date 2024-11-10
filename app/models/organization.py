@@ -16,7 +16,6 @@ class Organization(db.Model):
     description = db.Column(db.Text, nullable=False)
     location = db.Column(db.String(100))
     employees = db.Column(db.String(20))
-    imageUrl = db.Column(db.String(255))
     recruiterId = db.Column(
         db.Integer,
         db.ForeignKey("Recruiter.recruiterId", ondelete="SET NULL"),

@@ -29,7 +29,19 @@ def dashboard():
 def register_organization():
     form = OrganizationForm()
     if form.validate_on_submit():
-        # Register organization profile
+        # Retrieve form details
+        details = {
+            "name": form.name.data,
+            "description": form.description.data,
+            "location": form.location.data,
+            "employees": form.employees.data,
+            "recruiterId": current_user.recruiterId,
+        }
+
+        # Save organization details
+        Organization.create(details)
+
+        # Render success message to user
         flask.flash("Organization profile registered.", "success")
         return flask.redirect(flask.url_for("recruiters.dashboard"))
     return flask.render_template(

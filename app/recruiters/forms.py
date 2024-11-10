@@ -1,5 +1,4 @@
 from flask_wtf import FlaskForm
-from wtforms import URLField
 from wtforms import StringField
 from wtforms import TextAreaField
 from wtforms import SubmitField
@@ -9,10 +8,8 @@ from wtforms import SelectField
 from wtforms.validators import DataRequired
 from wtforms.validators import Length
 from wtforms.validators import Optional
-from wtforms.validators import URL
 from wtforms.validators import ValidationError
 
-from ..models import Recruiter
 from ..models import Organization
 
 
@@ -52,18 +49,13 @@ class UpdateJobListingForm(JobListingForm):
 
 
 class OrganizationForm(FlaskForm):
+    name = StringField("Name", validators=[Length(max=255)])
     description = TextAreaField("Description", validators=[DataRequired()])
     location = StringField(
         "Location", validators=[Optional(), Length(max=100)]
     )
-    employees = IntegerField("Number of Employees", validators=[Optional()])
-    imageUrl = URLField("Image URL", validators=[Optional(), URL()])
-    recruiterId = IntegerField("Recruiter ID", validators=[Optional()])
+    employees = StringField("Number of Employees", validators=[Optional()])
     submit = SubmitField("Save Organization")
-
-    def validate_recruiterId(self, field):
-        if field.data and not Recruiter.query.get(field.data):
-            raise ValidationError("Invalid recruiter ID.")
 
 
 class UpdateOrganizationForm(OrganizationForm):
