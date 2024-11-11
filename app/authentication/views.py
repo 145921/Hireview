@@ -106,15 +106,31 @@ def login():
 def applicant_registration():
     form = ApplicantRegistrationForm()
 
+    # Retrieve list of countries
+    countries_list = [
+        ((country.name), (country.name)) for country in iso3166.countries
+    ]
+    form.nationality.choices = countries_list
+
     if form.validate_on_submit():
+        # Retrieve form details
         details = {
             "name": form.name.data,
             "emailAddress": form.emailAddress.data.lower(),
             "phoneNumber": form.phoneNumber.data,
             "password": form.password.data,
+            "gender": form.gender.data,
+            "dateOfBirth": form.dateOfBirth.data,
+            "nationality": form.nationality.data,
+            "preferredLocation": form.preferredLocation.data,
+            "industries": form.industries.data,
+            "jobPreferences": form.jobPreferences.data,
         }
+
+        # Save applicant details
         Applicant.registerAccount(details)
 
+        # Render success message
         flask.flash("Registration successful. Feel free to login.", "success")
         return flask.redirect(flask.url_for("authentication.login"))
 
@@ -128,6 +144,7 @@ def user_registration():
     form = UserRegistrationForm()
 
     if form.validate_on_submit():
+        # Retrieve user form details
         details = {
             "name": form.name.data,
             "middleName": form.middleName.data,
@@ -137,8 +154,11 @@ def user_registration():
             "phoneNumber": form.phoneNumber.data,
             "password": form.password.data,
         }
+
+        # Save user details in the database
         User.registerAccount(details)
 
+        # Render success message
         flask.flash("Registration successful. Feel free to login.", "success")
         return flask.redirect(flask.url_for("authentication.login"))
 
@@ -158,6 +178,7 @@ def recruiter_registration():
     form.nationality.choices = countries_list
 
     if form.validate_on_submit():
+        # Retrieve recruiter form details
         details = {
             "name": form.name.data,
             "emailAddress": form.emailAddress.data,
@@ -165,8 +186,11 @@ def recruiter_registration():
             "phoneNumber": form.phoneNumber.data,
             "password": form.password.data,
         }
+
+        # Save recruiter details in database
         Recruiter.registerAccount(details)
 
+        # Render success message
         flask.flash("Registration successful. Feel free to login.", "success")
         return flask.redirect(flask.url_for("authentication.login"))
 

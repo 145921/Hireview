@@ -81,8 +81,7 @@ class Applicant(flask_login.UserMixin, db.Model):
             name=details.get("name"),
             emailAddress=details.get("emailAddress"),
             phoneNumber=details.get("phoneNumber"),
-            passwordHash=details.get("passwordHash"),
-            avatarHash=details.get("avatarHash"),
+            password=details.get("password"),
             gender=details.get("gender"),
             imageUrl=details.get("imageUrl"),
             dateOfBirth=details.get("dateOfBirth"),
@@ -90,11 +89,13 @@ class Applicant(flask_login.UserMixin, db.Model):
             preferredLocation=details.get("preferredLocation"),
             industries=details.get("industries"),
             jobPreferences=details.get("jobPreferences"),
-            isActive=details.get("isActive", True),
-            isVerified=details.get("isVerified", False),
         )
         db.session.add(applicant)
         db.session.commit()
+
+        # Send confirmation email
+        applicant.sendConfirmationEmail()
+
         return applicant
 
     def update(self, details: dict) -> "Applicant":
@@ -389,3 +390,53 @@ class Applicant(flask_login.UserMixin, db.Model):
         return "{url}/{hash}?s={size}&d={default}&r={rating}".format(
             url=url, hash=hash, size=size, default=default, rating=rating
         )
+
+    def sendConfirmationEmail(self):
+        """
+        Send confirmation email to the applicant.
+        """
+        token = self.generateConfirmationToken()
+        confirmation_link = url_for(
+            "authentication.applicant_confirm",
+            token=token,
+            applicant_id=self.applicantId,
+            _scheme="http",
+            _external=True,
+        )
+
+        subject = "Confirm Your Email"
+        send_email(
+            [self.emailAddress],
+            subject,
+            "email/email_confirmation",
+            user=self,
+            confirmation_link=confirmation_link,
+        )
+
+    def confirm(self, token, expiration=3600):
+        """
+        Confirm user's email.
+
+        This method uses a token to confirm the user's email address.
+
+        :return: bool - True if confirmation is successful, False otherwise.
+        """
+        serializer = Serializer(flask.current_app.config["SECRET_KEY"])
+
+        try:
+            data = serializer.loads(token, max_age=expiration)
+
+        except Exception:
+            return False
+
+        # Ensure that the link is not corrupted
+        if data != self.emailAddress:
+            return False
+
+        # Update confirm status
+        self.isVerified = True
+
+        db.session.add(self)
+        db.session.commit()
+
+        return True

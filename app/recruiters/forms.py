@@ -1,47 +1,42 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField
-from wtforms import TextAreaField
 from wtforms import SubmitField
-from wtforms import IntegerField
 from wtforms import SelectField
+from wtforms import TextAreaField
+from wtforms import DateTimeField
 
 from wtforms.validators import DataRequired
 from wtforms.validators import Length
 from wtforms.validators import Optional
-from wtforms.validators import ValidationError
-
-from ..models import Organization
 
 
 class JobListingForm(FlaskForm):
     title = StringField(
-        "Job Title", validators=[DataRequired(), Length(max=255)]
+        "Job Title", validators=[DataRequired(), Length(max=100)]
     )
-    description = TextAreaField("Job Description", validators=[DataRequired()])
-    requirements = TextAreaField("Requirements", validators=[Optional()])
-    responsibilities = TextAreaField(
-        "Responsibilities", validators=[Optional()]
+    position = StringField(
+        "Position", validators=[DataRequired(), Length(max=100)]
     )
-    employmentType = SelectField(
-        "Employment Type",
+    workingMethod = SelectField(
+        "Working Method",
         choices=[
-            ("Full-Time", "Full-Time"),
-            ("Part-Time", "Part-Time"),
-            ("Internship", "Internship"),
+            ("onsite", "On-Site"),
+            ("offsite", "Off-Site"),
+            ("hybrid", "Hybrid"),
         ],
         validators=[DataRequired()],
     )
-    location = StringField(
-        "Location", validators=[DataRequired(), Length(max=100)]
+    description = TextAreaField("Job Description", validators=[DataRequired()])
+    category = StringField(
+        "Category", validators=[Optional(), Length(max=100)]
     )
-    organizationId = IntegerField(
-        "Organization ID", validators=[DataRequired()]
+    location = StringField(
+        "Location", validators=[Optional(), Length(max=100)]
+    )
+    deadline = DateTimeField(
+        "Application Deadline", format="%Y-%m-%d", validators=[Optional()]
     )
     submit = SubmitField("Save Job Listing")
-
-    def validate_organizationId(self, field):
-        if not Organization.query.get(field.data):
-            raise ValidationError("Invalid organization ID.")
 
 
 class UpdateJobListingForm(JobListingForm):

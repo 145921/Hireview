@@ -29,6 +29,10 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
+            {% if current_user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('authentication.login') }}">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('authentication.logout') }}">Logout</a></li>
+            {% else %}
             <li class="nav-item"><a class="nav-link" href="{{ url_for('authentication.applicant_registration') }}">For Job Seekers</a></li>
             <li class="nav-item"><a class="nav-link" href="{{ url_for('authentication.recruiter_registration') }}">For Recruiters</a></li>
             <li class="nav-item">
@@ -37,6 +41,7 @@
             <li class="nav-item">
               <a class="sign-in-nav btn btn-outline-light ms-2 my-2 my-sm-0" href="{{ url_for('authentication.login') }}">Login</a>
             </li>
+            {% endif %}
 
           </ul>
         </div>

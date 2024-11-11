@@ -16,6 +16,7 @@ Applicant Sign Up
       <div class="text-danger">{{ error }}</div>
       {% endfor %}
     </div>
+    
     <div class="mb-3">
       {{ form.emailAddress.label(class="form-label") }}
       {{ form.emailAddress(class="form-control") }}
@@ -23,6 +24,7 @@ Applicant Sign Up
       <div class="text-danger">{{ error }}</div>
       {% endfor %}
     </div>
+
     <div class="mb-3">
       {{ form.phoneNumber.label(class="form-label") }}
       {{ form.phoneNumber(class="form-control") }}
@@ -30,6 +32,60 @@ Applicant Sign Up
       <div class="text-danger">{{ error }}</div>
       {% endfor %}
     </div>
+        <!-- Gender Field -->
+    <div class="mb-3">
+        {{ form.gender.label(class="form-label") }}
+        {{ form.gender(class="form-control") }}
+        {% for error in form.gender.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <!-- Date of Birth Field -->
+    <div class="mb-3">
+        {{ form.dateOfBirth.label(class="form-label") }}
+        {{ form.dateOfBirth(class="form-control") }}
+        {% for error in form.dateOfBirth.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <!-- Nationality Field -->
+    <div class="mb-3">
+        {{ form.nationality.label(class="form-label") }}
+        {{ form.nationality(class="form-control") }}
+        {% for error in form.nationality.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <!-- Preferred Location Field -->
+    <div class="mb-3">
+        {{ form.preferredLocation.label(class="form-label") }}
+        {{ form.preferredLocation(class="form-control") }}
+        {% for error in form.preferredLocation.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <!-- Industries Field -->
+    <div class="mb-3">
+        {{ form.industries.label(class="form-label") }}
+        {{ form.industries(class="form-control") }}
+        {% for error in form.industries.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <!-- Job Preferences Field -->
+    <div class="mb-3">
+        {{ form.jobPreferences.label(class="form-label") }}
+        {{ form.jobPreferences(class="form-control") }}
+        {% for error in form.jobPreferences.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+    </div>
+
     <div class="mb-3">
       {{ form.password.label(class="form-label") }}
       {{ form.password(class="form-control") }}

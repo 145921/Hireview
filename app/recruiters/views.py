@@ -24,7 +24,7 @@ def dashboard():
     return flask.render_template("recruiters/dashboard.html")
 
 
-@recruiters.route("/organization/register", methods=["GET", "POST"])
+@recruiters.route("/organizations/register", methods=["GET", "POST"])
 @login_required
 def register_organization():
     form = OrganizationForm()
@@ -50,7 +50,7 @@ def register_organization():
 
 
 @recruiters.route(
-    "/organization/<int:organization_id>/update", methods=["GET", "POST"]
+    "/organizations/<int:organization_id>/update", methods=["GET", "POST"]
 )
 @login_required
 def update_organization(organization_id):
@@ -84,7 +84,7 @@ def update_organization(organization_id):
 
 
 @recruiters.route(
-    "/organization/<int:organization_id>/delete", methods=["POST"]
+    "/organizations/<int:organization_id>/delete", methods=["POST"]
 )
 @login_required
 def delete_organization(organization_id):
@@ -109,7 +109,7 @@ def delete_organization(organization_id):
     return flask.redirect(flask.url_for("recruiters.dashboard"))
 
 
-@recruiters.route("/organization/<int:organization_id>/jobs", methods=["GET"])
+@recruiters.route("/organizations/<int:organization_id>/jobs", methods=["GET"])
 @login_required
 def view_organization(organization_id):
     organization = Organization.query.filter_by(
@@ -127,15 +127,42 @@ def list_jobs():
     return flask.render_template("recruiters/jobs.html", jobs=jobs)
 
 
-@recruiters.route("/job/add", methods=["GET", "POST"])
+@recruiters.route(
+    "organizations/<int:organization_id>/jobs/add", methods=["GET", "POST"]
+)
 @login_required
-def add_job():
+def add_job_listing(organization_id):
+    # Retrieve organization record
+    organization = Organization.query.filter_by(
+        organizationId=organization_id
+    ).first_or_404()
+
+    # Instantialize Add Job Listing Form
     form = JobListingForm()
+
     if form.validate_on_submit():
-        # Add job listing
-        flask.flash("Job listing added.", "success")
+        # Retrieve form details
+        details = {
+            "title": form.title.data,
+            "description": form.description.data,
+            "position": form.position.data,
+            "workingMethod": form.workingMethod.data,
+            "category": form.category.data,
+            "location": form.location.data,
+            "deadline": form.deadline.data,
+            "organizationId": organization.organizationId,
+        }
+
+        # Save job listing
+        JobListing.create(details)
+
+        # Render success message
+        flask.flash("Job listing added successfully.", "success")
         return flask.redirect(flask.url_for("recruiters.list_jobs"))
-    return flask.render_template("recruiters/add_job.html", form=form)
+
+    return flask.render_template(
+        "recruiters/add_job.html", form=form, organization=organization
+    )
 
 
 @recruiters.route("/job/<int:job_id>/edit", methods=["GET", "POST"])

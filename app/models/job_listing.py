@@ -1,6 +1,9 @@
 from app import db
 from datetime import datetime
 
+from utilities.email_utils import send_email
+from utilities.securities import get_eligible_applicants_for_job
+
 
 class JobListing(db.Model):
     """
@@ -34,9 +37,7 @@ class JobListing(db.Model):
     organization = db.relationship(
         "Organization", back_populates="job_listings"
     )
-    applications = db.relationship(
-        "Application", back_populates="job_listing"
-    )
+    applications = db.relationship("Application", back_populates="job_listing")
 
     def __repr__(self) -> str:
         return (
@@ -55,6 +56,17 @@ class JobListing(db.Model):
         job_listing = cls(**details)
         db.session.add(job_listing)
         db.session.commit()
+
+        # Send email to all relevant applicants
+        subject = f"New Job Available: {job_listing.title}"
+        for applicant in get_eligible_applicants_for_job(job_listing):
+            send_email(
+                [applicant.emailAddress],
+                subject,
+                "email/new_job",
+                job=job_listing,
+            )
+
         return job_listing
 
     def update(self, details: dict) -> "JobListing":
