@@ -77,9 +77,7 @@ def get_eligible_job_listings_for_applicant(applicant):
     for job_listing in all_job_listings:
         # Check if job listing matches applicant's criteria
         if (
-            job_listing.workingMethod in (applicant.jobPreferences or "")
-            and job_listing.location in (applicant.preferredLocation or "")
-            and job_listing.category in (applicant.industries or "")
+            True
         ):
             eligible_job_listings.append(job_listing)
 

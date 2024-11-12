@@ -1,0 +1,62 @@
+{% extends "applicants/base.html" %}
+{% block title %}
+View Job #{{ job.jobListingId }}
+{% endblock %}
+
+{% block page_content %}
+<!-- Job Header -->
+<div class="job-header">
+  <h1>{{ job.title }}</h1>
+  <span class="badge bg-primary">{{ job.category }}</span>
+  <span class="badge bg-success">{{ job.workingMethod }}</span>
+  <p class="text-muted mt-3">Location: {{ job.location }} | Deadline: {{ moment(job.deadline).format('LLLL') }}</p>
+</div>
+
+<!-- Tabs Section -->
+<ul class="nav nav-tabs" id="jobDetailsTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="overview-tab" data-bs-toggle="tab" href="#overview" role="tab">Job Overview</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="company-tab" data-bs-toggle="tab" href="#company" role="tab">Company Details</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="requirements-tab" data-bs-toggle="tab" href="#requirements" role="tab">Requirements</a>
+  </li>
+</ul>
+<div class="tab-content mt-3" id="jobDetailsTabContent">
+  <!-- Job Overview Tab -->
+  <div class="tab-pane fade show active" id="overview" role="tabpanel">
+    <div class="job-overview mb-4">
+      <p style="white-space: pre-line;">{{ job.description }}</p>
+    </div>
+  </div>
+  <!-- Company Details Tab -->
+  <div class="tab-pane fade" id="company" role="tabpanel">
+    <h2>About {{ job.organization.name }}</h2>
+    <p style="white-space: pre-line;">{{ job.organization.description }}</p>
+  </div>
+  <!-- Application Requirements Tab -->
+  <div class="tab-pane fade" id="requirements" role="tabpanel">
+    <form id="make-application-form" action="{{ url_for('applicants.view_job', job_listing_id=job.jobListingId) }}" enctype="multipart/form-data" method="POST">
+      {{ form.hidden_tag() }}
+      <div class="mb-3">
+        {{ form.coverLetter.label(class="form-label") }}
+        {{ form.coverLetter(class="form-control", rows=10) }}
+        {% for error in form.coverLetter.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
+      <div class="mb-3">
+        {{ form.resumeFile.label(class="form-label") }}
+        {{ form.resumeFile(class="form-control", rows=5) }}
+        {% for error in form.resumeFile.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
+
+      {{ form.submit(class = "btn btn-custom-primary") }}
+    </form>
+  </div>
+</div>
+{% endblock %}

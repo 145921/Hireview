@@ -1,19 +1,20 @@
 {% extends "applicants/base.html" %}
 {% block title %}
-Dashboard
+View Applied Jobs
 {% endblock %}
 
 {% block page_content %}
 <!-- Search Bar -->
 <div class="search-bar">
-  <input type="text" id="job-search" placeholder="Search job jobs...">
+  <input type="text" id="job-search" placeholder="Search applications...">
 </div>
 
 <!-- Job Opportunities Grid -->
 <div id="job-grid" class="container">
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-3">
-    {% for job in jobs %}
-    <div class="col profile-card" data-title="{{ job.title}}" data-position="{{ job.position }}" data-location="{{ job.location }}" data-description="{{ job.description }}" data-institution="{{ job.organization.name }}" data-working-method="{{ job.workingMethod }}" data-category="{{ job.category }}">
+    {% for application in current_user.applications %}
+    {% set job = application.job_listing %}
+    <div class="col profile-card" data-title="{{ job.title}}" data-position="{{ job.position }}" data-location="{{ job.location }}" data-description="{{ job.description }}" data-institution="{{ job.organization.name }}" data-working-method="{{ job.workingMethod }}" data-category="{{ job.category }}" data-status="{{ application.status }}">
       <div class="card job-card">
         <div class="card-body">
           <span class="category-badge">{{ job.category }}</span>
@@ -25,7 +26,7 @@ Dashboard
           <p class="card-text">
           {{ job.description[0: 400] }}...
           </p>
-          <a href="{{ url_for('applicants.view_job', job_listing_id=job.jobListingId) }}" class="apply-btn custom-btn-primary">Apply Now</a>
+          <a href="{{ url_for('applicants.view_job', job_listing_id=job.jobListingId) }}" class="apply-btn custom-btn-primary">View Application</a>
         </div>
       </div>
     </div>
@@ -50,8 +51,9 @@ Dashboard
               const institution = card.getAttribute('data-institution').toLowerCase();
               const working_method = card.getAttribute('data-working-method').toLowerCase();
               const category = card.getAttribute('data-category').toLowerCase();
+              const application_status = card.getAttribute('data-status').toLowerCase();
 
-              if (title.includes(searchTerm) || position.includes(searchTerm) || location.includes(searchTerm) || description.includes(searchTerm) || institution.includes(searchTerm) || working_method.includes(searchTerm) || category.includes(searchTerm)) {
+              if (title.includes(searchTerm) || position.includes(searchTerm) || application_status.includes(searchTerm) || location.includes(searchTerm) || description.includes(searchTerm) || institution.includes(searchTerm) || working_method.includes(searchTerm) || category.includes(searchTerm)) {
                   card.style.display = '';
                 } else {
                     card.style.display = 'none';

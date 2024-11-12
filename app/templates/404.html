@@ -1,19 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 Not Found</title>
-    <link rel="stylesheet" href="path/to/your/styles.css">
-  </head>
-  <body>
+{% extends "base.html" %}
+{% block title %}
+404 Not Found
+{% endblock %}
 
-    <div class="container">
-      <h1>404</h1>
-      <h2>Oops! Page Not Found</h2>
-      <p>Sorry, the page you’re looking for doesn’t exist. It might have been removed, renamed, or is temporarily unavailable.</p>
-      <a href="/" class="home-btn">Back to Homepage</a>
-    </div>
-
-  </body>
-</html>
+{% block page_content %}
+<div class="container">
+  <h1>404</h1>
+  <h2>Oops! Page Not Found</h2>
+  <p>Sorry, the page you’re looking for doesn’t exist. It might have been removed, renamed, or is temporarily unavailable.</p>
+  <a href="/" class="home-btn">Back to Homepage</a>
+</div>
+{% endblock page_content %}

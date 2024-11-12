@@ -4,6 +4,9 @@ from wtforms import StringField
 from wtforms import SubmitField
 from wtforms import SelectField
 from wtforms import TextAreaField
+from flask_wtf.file import FileField
+from flask_wtf.file import FileAllowed
+from flask_wtf.file import FileRequired
 
 from wtforms.validators import URL
 from wtforms.validators import Email
@@ -175,3 +178,20 @@ class JobListingForm(FlaskForm):
         render_kw={"placeholder": "Enter deadline here (YYYY-MM-DD HH:MM:SS)"},
     )
     submit = SubmitField("Save Job Listing")
+
+
+class ApplicationForm(FlaskForm):
+    coverLetter = TextAreaField(
+        "Cover Letter",
+        validators=[DataRequired()],
+        render_kw={"placeholder": "Paste cover letter here"},
+    )
+    resumeFile = FileField(
+        "Select Resume File (PDF)",
+        validators=[
+            FileRequired(),
+            FileAllowed({"pdf"}, "PDF Files only!"),
+        ],
+    )
+
+    submit = SubmitField("Save Application Details")
