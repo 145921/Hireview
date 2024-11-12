@@ -57,35 +57,35 @@ View Job #{{ job.jobListingId }}
             <td>{{ application.applicant.name }}</td>
             <td>{{ moment(application.dateCreated).format('LLLL') }}</td>
             <td>
-              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteOrganization{{ loop.index }}Modal">
+              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewResume{{ loop.index }}Modal">
                 View Resume
               </button>
             </td>
             <td>
-              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteOrganization{{ loop.index }}Modal">
+              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewCoverLetter{{ loop.index }}Modal">
                 View Cover Letter
               </button>
             </td>
             <td>{{ application.status }}</td>
             <td>
-              <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#deleteOrganization{{ loop.index }}Modal">
+              <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#acceptApplication{{ loop.index }}Modal">
                 Accept
               </button>
-              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteOrganization{{ loop.index }}Modal">
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectApplication{{ loop.index }}Modal">
                 Reject
               </button>
             </td>
           </tr>
 
           <!-- View cover letter modal -->
-          <div class="modal fade" id="viewCoverLetterModal" tabindex="-1" aria-labelledby="viewCoverLetterModalLabel" aria-hidden="true">
+          <div class="modal modal-lg fade" id="viewCoverLetter{{ loop.index }}Modal" tabindex="-1" aria-labelledby="viewCoverLetter{{ loop.index }}ModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="viewCoverLetterModalLabel">View Cover Letter</h5>
+                  <h5 class="modal-title" id="viewCoverLetter{{ loop.index }}ModalLabel">View Cover Letter</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body scrollable-modal-body">
                   <p style="white-space: pre-line;">{{ application.coverLetter }}</p>
                 </div>
               </div>
@@ -93,26 +93,26 @@ View Job #{{ job.jobListingId }}
           </div>
 
           <!-- View resume modal -->
-          <div class="modal fade" id="viewResumeModal" tabindex="-1" aria-labelledby="viewResumeModalLabel" aria-hidden="true">
+          <div class="modal modal-lg fade" id="viewResume{{ loop.index }}Modal" tabindex="-1" aria-labelledby="viewResume{{ loop.index }}ModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="viewResumeModalLabel">View Resume</h5>
+                  <h5 class="modal-title" id="viewResume{{ loop.index }}ModalLabel">View Resume</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                  <iframe src="/static/custom/applications/{{ application.applicationId }}/{{ application.resumeUrl }}" width="100%" height="500px" style="border: none;"></iframe>
+                <div class="modal-body ">
+                  <iframe src="/static/custom/applications/{{ application.applicationId }}/{{ application.resumeUrl }}" width="100%" height="400px" style="border: none;"></iframe>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Accept application modal -->
-          <div class="modal fade" id="acceptApplicationModal" tabindex="-1" aria-labelledby="acceptApplicationModalLabel" aria-hidden="true">
+          <div class="modal fade" id="acceptApplication{{ loop.index }}Modal" tabindex="-1" aria-labelledby="acceptApplication{{ loop.index }}ModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="acceptApplicationModalLabel">Accept Application</h5>
+                  <h5 class="modal-title" id="acceptApplication{{ loop.index }}ModalLabel">Accept Application</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

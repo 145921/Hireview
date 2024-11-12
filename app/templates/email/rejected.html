@@ -2,6 +2,6 @@
 
 {% block content %}
 <p>Hello {{ applicant.name }},</p>
-<p>We appreciate your interest in the "<strong>{{ job.title }}</strong>" position at {{ organization.name }}. After careful consideration, we have chosen another candidate for this role.</p>
+<p>We appreciate your interest in the "<strong>{{ job.title }}</strong>" position at {{ job.organization.name }}. After careful consideration, we have chosen another candidate for this role.</p>
 <p>Thank you for applying, and we encourage you to explore other opportunities on Hireview.</p>
 {% endblock %}

@@ -440,3 +440,30 @@ class Applicant(flask_login.UserMixin, db.Model):
         db.session.commit()
 
         return True
+
+    def hasApplied(self, job) -> bool:
+        """
+        Checks if the applicant has applied for the job
+
+        :param job: JobListing - The job listing to be compared against
+        """
+        applied_jobs = [
+            application.job_listing for application in self.applications
+        ]
+        return job in applied_jobs
+
+    def getJobApplication(self, job_listing):
+        """
+        Retrieves application associated with the job listing instance
+
+        :param job_listing: JobListing - JobListing instance to be queried
+            against.
+        :return: Application - Fetched Application.
+        """
+        from .application import Application
+
+        application = Application.query.filter(
+            Application.jobListingId == job_listing.jobListingId,
+            Application.applicantId == flask_login.current_user.applicantId,
+        ).first()
+        return application

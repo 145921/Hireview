@@ -1,4 +1,8 @@
+import os
+import shutil
 from datetime import datetime
+
+import flask
 
 from app import db
 from utilities.email_utils import send_email
@@ -66,7 +70,7 @@ class Application(db.Model):
         db.session.commit()
 
         # Send receipt confirmation message
-        subject = f"Application Received for {application.job.title}"
+        subject = f"Application Received for {application.job_listing.title}"
         send_email(
             [application.applicant.emailAddress],
             subject,
@@ -95,6 +99,14 @@ class Application(db.Model):
 
         :return: None
         """
+        # Delete existing files
+        folder = os.path.join(
+            flask.current_app.config["APPLICATIONS_PROFILE_UPLOAD_PATH"],
+            str(self.applicationId),
+        )
+        shutil.rmtree(folder)
+
+        # Delete the application record
         db.session.delete(self)
         db.session.commit()
 
