@@ -9,6 +9,8 @@ from .forms import OrganizationForm
 from ..models import JobListing
 from ..models import Application
 from ..models import Organization
+
+from utilities.authentication import user_type_validator
 from utilities.authentication import email_confirmation_required
 
 
@@ -20,12 +22,14 @@ def restrict_unconfirmed():
 
 @recruiters.route("/dashboard")
 @login_required
+@user_type_validator("recruiter")
 def dashboard():
     return flask.render_template("recruiters/dashboard.html")
 
 
 @recruiters.route("/organizations/register", methods=["GET", "POST"])
 @login_required
+@user_type_validator("recruiter")
 def register_organization():
     form = OrganizationForm()
     if form.validate_on_submit():
@@ -53,6 +57,7 @@ def register_organization():
     "/organizations/<int:organization_id>/update", methods=["GET", "POST"]
 )
 @login_required
+@user_type_validator("recruiter")
 def update_organization(organization_id):
     # Retrieve organization record
     organization = Organization.query.get_or_404(organization_id)
@@ -87,6 +92,7 @@ def update_organization(organization_id):
     "/organizations/<int:organization_id>/delete", methods=["POST"]
 )
 @login_required
+@user_type_validator("recruiter")
 def delete_organization(organization_id):
     # Retrieve organization record
     organization = Organization.query.filter_by(
@@ -111,6 +117,7 @@ def delete_organization(organization_id):
 
 @recruiters.route("/organizations/<int:organization_id>/jobs", methods=["GET"])
 @login_required
+@user_type_validator("recruiter")
 def view_organization(organization_id):
     organization = Organization.query.filter_by(
         organizationId=organization_id
@@ -122,6 +129,7 @@ def view_organization(organization_id):
 
 @recruiters.route("/jobs", methods=["GET"])
 @login_required
+@user_type_validator("recruiter")
 def list_jobs():
     jobs = (
         JobListing.query.join(
@@ -138,6 +146,7 @@ def list_jobs():
     "organizations/<int:organization_id>/jobs/add", methods=["GET", "POST"]
 )
 @login_required
+@user_type_validator("recruiter")
 def add_job_listing(organization_id):
     # Retrieve organization record
     organization = Organization.query.filter_by(
@@ -174,6 +183,7 @@ def add_job_listing(organization_id):
 
 @recruiters.route("/jobs/<int:job_listing_id>/edit")
 @login_required
+@user_type_validator("recruiter")
 def view_job(job_listing_id):
     job = JobListing.query.filter_by(
         jobListingId=job_listing_id
@@ -183,6 +193,7 @@ def view_job(job_listing_id):
 
 @recruiters.route("/jobs/<int:job_listing_id>/update", methods=["GET", "POST"])
 @login_required
+@user_type_validator("recruiter")
 def update_job(job_listing_id):
     # Retrieve job record
     job = JobListing.query.get_or_404(job_listing_id)
@@ -219,6 +230,7 @@ def update_job(job_listing_id):
 
 @recruiters.route("/jobs/<int:job_listing_id>/delete", methods=["POST"])
 @login_required
+@user_type_validator("recruiter")
 def delete_job(job_listing_id):
     # Retrieve job listing
     job = JobListing.query.get_or_404(job_listing_id)
@@ -235,6 +247,7 @@ def delete_job(job_listing_id):
     "/applications/<int:application_id>/reject", methods=["POST"]
 )
 @login_required
+@user_type_validator("recruiter")
 def reject_application(application_id):
     # Retrieve application record
     application = Application.query.get_or_404(application_id)
@@ -255,6 +268,7 @@ def reject_application(application_id):
     "/applications/<int:application_id>/accept", methods=["POST"]
 )
 @login_required
+@user_type_validator("recruiter")
 def accept_application(application_id):
     # Retrieve application record
     application = Application.query.get_or_404(application_id)
@@ -266,6 +280,7 @@ def accept_application(application_id):
     flask.flash("Email sent to applicant successfully", "success")
     return flask.redirect(
         flask.url_for(
-            "recruiters.view_job", job_listing_id=application.job.jobListingId
+            "recruiters.view_job",
+            job_listing_id=application.job_listing.jobListingId,
         )
     )

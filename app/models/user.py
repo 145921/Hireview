@@ -60,10 +60,8 @@ class User(flask_login.UserMixin, db.Model):
             name=details.get("name"),
             emailAddress=details.get("emailAddress"),
             phoneNumber=details.get("phoneNumber"),
-            passwordHash=details.get("passwordHash"),
-            avatarHash=details.get("avatarHash"),
-            isActive=details.get("isActive", True),
-            isVerified=details.get("isVerified", False),
+            password=details.get("password"),
+            isVerified=details.get("isVerified", True),
         )
         db.session.add(user)
         db.session.commit()
@@ -79,10 +77,6 @@ class User(flask_login.UserMixin, db.Model):
         self.name = details.get("name", self.name)
         self.emailAddress = details.get("emailAddress", self.emailAddress)
         self.phoneNumber = details.get("phoneNumber", self.phoneNumber)
-        self.passwordHash = details.get("passwordHash", self.passwordHash)
-        self.avatarHash = details.get("avatarHash", self.avatarHash)
-        self.isActive = details.get("isActive", self.isActive)
-        self.isVerified = details.get("isVerified", self.isVerified)
         db.session.commit()
         return self
 

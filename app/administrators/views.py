@@ -10,15 +10,9 @@ from ..models import JobListing
 @administrators.route("/dashboard")
 @login_required
 def dashboard():
-    return flask.render_template("administrators/dashboard.html")
-
-
-@administrators.route("/recruiters")
-@login_required
-def view_recruiters():
     recruiters = Recruiter.query.all()
     return flask.render_template(
-        "administrators/recruiters.html", recruiters=recruiters
+        "administrators/dashboard.html", recruiters=recruiters
     )
 
 
@@ -27,19 +21,29 @@ def view_recruiters():
 )
 @login_required
 def approve_recruiter(recruiter_id):
+    # Retrieve recruiter record
+    recruiter = Recruiter.query.get_or_404()
+
     # Approve recruiter
+    recruiter.approve()
+
+    # Render success message
     flask.flash("Recruiter approved.", "success")
-    return flask.redirect(flask.url_for("administrators.view_recruiters"))
+    return flask.redirect(flask.url_for("administrators.dashboard"))
 
 
-@administrators.route(
-    "/recruiter/<int:recruiter_id>/disapprove", methods=["POST"]
-)
+@administrators.route("/recruiter/<int:recruiter_id>/reject", methods=["POST"])
 @login_required
-def disapprove_recruiter(recruiter_id):
+def reject_recruiter(recruiter_id):
+    # Retrieve recruiter record
+    recruiter = Recruiter.query.get_or_404()
+
     # Disapprove recruiter
+    recruiter.reject()
+
+    # Render success message
     flask.flash("Recruiter disapproved.", "info")
-    return flask.redirect(flask.url_for("administrators.view_recruiters"))
+    return flask.redirect(flask.url_for("administrators.dashboard"))
 
 
 @administrators.route("/recruiters/report/download", methods=["GET"])

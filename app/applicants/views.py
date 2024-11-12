@@ -1,16 +1,25 @@
 import os
 
 import flask
+import iso3166
 from flask_login import current_user
+from flask_login import login_required
 from werkzeug.utils import secure_filename
 
 from app import db
 from . import applicants
+from .forms import EducationForm
+from .forms import ExperienceForm
 from .forms import ApplicationForm
+from .forms import UpdateApplicantForm
+from .forms import UpdateEducationForm
+from .forms import UpdateExperienceForm
+
 from ..models import JobListing
 from ..models import Application
 
 from utilities.file_saver import allowed_file
+from utilities.authentication import user_type_validator
 from utilities.authentication import email_confirmation_required
 from utilities.securities import get_eligible_job_listings_for_applicant
 
@@ -22,12 +31,16 @@ def restrict_unconfirmed():
 
 
 @applicants.route("/dashboard")
+@login_required
+@user_type_validator("applicant")
 def dashboard():
     jobs = get_eligible_job_listings_for_applicant(current_user)
     return flask.render_template("applicants/dashboard.html", jobs=jobs)
 
 
 @applicants.route("/jobs/applied")
+@login_required
+@user_type_validator("applicant")
 def view_applied_jobs():
     return flask.render_template(
         "applicants/view_applied_jobs.html",
@@ -35,6 +48,8 @@ def view_applied_jobs():
 
 
 @applicants.route("/applications/successful")
+@login_required
+@user_type_validator("applicant")
 def view_successful_applications():
     applications = [
         application
@@ -48,6 +63,8 @@ def view_successful_applications():
 
 
 @applicants.route("/jobs/<int:job_listing_id>/view", methods=["GET", "POST"])
+@login_required
+@user_type_validator("applicant")
 def view_job(job_listing_id):
     job = JobListing.query.filter_by(
         jobListingId=job_listing_id
@@ -100,6 +117,8 @@ def view_job(job_listing_id):
 @applicants.route(
     "/applications/<int:application_id>/cancel", methods=["POST"]
 )
+@login_required
+@user_type_validator("applicant")
 def cancel_application(application_id):
     # Retrieve application record
     application = Application.query.get_or_404(application_id)
@@ -115,6 +134,8 @@ def cancel_application(application_id):
 @applicants.route(
     "applications/<int:application_id>/update_resume", methods=["POST"]
 )
+@login_required
+@user_type_validator("applicant")
 def update_resume(application_id):
     # Retrieve application record
     application = Application.query.get_or_404(application_id)
@@ -166,6 +187,8 @@ def update_resume(application_id):
 @applicants.route(
     "/applications/<int:application_id>/update_cover_letter", methods=["POST"]
 )
+@login_required
+@user_type_validator("applicant")
 def update_cover_letter(application_id):
     # Retrieve application record
     application = Application.query.get_or_404(application_id)
@@ -187,4 +210,76 @@ def update_cover_letter(application_id):
         flask.url_for(
             "applicants.view_job", job_listing_id=application.jobListingId
         )
+    )
+
+
+@applicants.route(
+    "/manage_profile", methods=["GET", "POST"]
+)
+@login_required
+def manage_profile():
+    # Instantiate each form
+    profile_form = UpdateApplicantForm(obj=current_user)
+    profile_form.csrf_token.render_kw = {"id": "profile_csrf"}
+    countries_list = [
+        ((country.name), (country.name)) for country in iso3166.countries
+    ]
+    profile_form.nationality.choices = countries_list
+
+    education_form = EducationForm()
+    education_form.csrf_token.render_kw = {"id": "education_csrf"}
+
+    update_education_form = UpdateEducationForm()
+    update_education_form.csrf_token.render_kw = {
+        "id": "update_education_csrf"
+    }
+
+    experience_form = ExperienceForm()
+    experience_form.csrf_token.render_kw = {"id": "experience_csrf"}
+
+    update_experience_form = UpdateExperienceForm()
+    update_experience_form.csrf_token.render_kw = {
+        "id": "update_experience_csrf"
+    }
+
+    # Check which form was submitted
+    if profile_form.submit.data and profile_form.validate_on_submit():
+        # Update applicant profile logic
+        flask.flash("Applicant information updated successfully.", "success")
+        return flask.redirect(flask.url_for("applicants.manage_profile"))
+
+    elif education_form.submit.data and education_form.validate_on_submit():
+        # Add new education entry logic
+        flask.flash("Education entry added successfully.", "success")
+        return flask.redirect(flask.url_for("applicants.manage_profile"))
+
+    elif (
+        update_education_form.submit.data
+        and update_education_form.validate_on_submit()
+    ):
+        # Update education entry logic
+        flask.flash("Education entry updated successfully.", "success")
+        return flask.redirect(flask.url_for("applicants.manage_profile"))
+
+    elif experience_form.submit.data and experience_form.validate_on_submit():
+        # Add new experience entry logic
+        flask.flash("Experience entry added successfully.", "success")
+        return flask.redirect(flask.url_for("applicants.manage_profile"))
+
+    elif (
+        update_experience_form.submit.data
+        and update_experience_form.validate_on_submit()
+    ):
+        # Update experience entry logic
+        flask.flash("Experience entry updated successfully.", "success")
+        return flask.redirect(flask.url_for("applicants.manage_profile"))
+
+    # Render the template with all forms
+    return flask.render_template(
+        "applicants/manage_profile.html",
+        profile_form=profile_form,
+        education_form=education_form,
+        update_education_form=update_education_form,
+        experience_form=experience_form,
+        update_experience_form=update_experience_form,
     )

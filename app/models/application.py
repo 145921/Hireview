@@ -104,7 +104,10 @@ class Application(db.Model):
             flask.current_app.config["APPLICATIONS_PROFILE_UPLOAD_PATH"],
             str(self.applicationId),
         )
-        shutil.rmtree(folder)
+        try:
+            shutil.rmtree(folder)
+        except Exception:
+            pass
 
         # Delete the application record
         db.session.delete(self)

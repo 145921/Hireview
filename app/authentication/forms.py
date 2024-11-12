@@ -90,7 +90,7 @@ class ApplicantRegistrationForm(FlaskForm):
     preferredLocation = StringField(
         "Preferred Location", validators=[Optional(), Length(max=100)]
     )
-    industry = SelectField(
+    industries = SelectField(
         "Industry",
         validators=[Optional(), Length(max=120)],
         choices=[
@@ -143,101 +143,6 @@ class ApplicantRegistrationForm(FlaskForm):
             ("Other", "Other"),
         ],
     )
-
-    location = StringField(
-        "Location", validators=[Optional(), Length(max=120)]
-    )
-    deadline = DateField("Deadline", validators=[Optional()])
-    submit = SubmitField("Save Opportunity")
-
-
-class PlacementRequestRegistrationForm(FlaskForm):
-    title = StringField("Title", validators=[DataRequired(), Length(max=255)])
-    course = StringField(
-        "Course", validators=[DataRequired(), Length(max=255)]
-    )
-    description = TextAreaField("Description", validators=[Optional()])
-    position = StringField(
-        "Position", validators=[DataRequired(), Length(max=255)]
-    )
-    deadline = DateField("Deadline", validators=[Optional()])
-    location = StringField(
-        "Location", validators=[Optional(), Length(max=120)]
-    )
-    placementType = SelectField(
-        "Placement Type",
-        validators=[DataRequired(), Length(max=120)],
-        choices=[
-            ("Internship", "Internship"),
-            ("Co-op", "Co-op"),
-            ("Apprenticeship", "Apprenticeship"),
-            ("Part-time Placement", "Part-time Placement"),
-            ("Full-time Placement", "Full-time Placement"),
-            ("Remote", "Remote"),
-            ("On-site", "On-site"),
-            ("Hybrid", "Hybrid"),
-            ("Volunteer", "Volunteer"),
-            ("Project-based", "Project-based"),
-            ("Freelance/Contract", "Freelance/Contract"),
-            ("Traineeship", "Traineeship"),
-            ("Externship", "Externship"),
-            ("Other", "Other"),
-        ],
-    )
-    category = SelectField(
-        "Category",
-        validators=[DataRequired(), Length(max=120)],
-        choices=[
-            ("Software Development", "Software Development"),
-            (
-                "Engineering (Civil, Mechanical, Electrical)",
-                "Engineering (Civil, Mechanical, Electrical)",
-            ),
-            ("Data Science and Analytics", "Data Science and Analytics"),
-            (
-                "Information Technology (IT) and Systems",
-                "Information Technology (IT) and Systems",
-            ),
-            ("Marketing and Communications", "Marketing and Communications"),
-            (
-                "Human Resources (HR) and Talent Acquisition",
-                "Human Resources (HR) and Talent Acquisition",
-            ),
-            (
-                "Sales and Business Development",
-                "Sales and Business Development",
-            ),
-            ("Finance and Accounting", "Finance and Accounting"),
-            (
-                "Customer Support and Client Services",
-                "Customer Support and Client Services",
-            ),
-            ("Operations and Supply Chain", "Operations and Supply Chain"),
-            ("Product Management", "Product Management"),
-            ("Project Management", "Project Management"),
-            ("Legal and Compliance", "Legal and Compliance"),
-            ("Healthcare and Nursing", "Healthcare and Nursing"),
-            ("Education and Training", "Education and Training"),
-            ("Design and Creative Services", "Design and Creative Services"),
-            (
-                "Manufacturing and Quality Control",
-                "Manufacturing and Quality Control",
-            ),
-            ("Administrative Support", "Administrative Support"),
-            (
-                "Research and Development (R&D)",
-                "Research and Development (R&D)",
-            ),
-            (
-                "Environmental and Sustainability",
-                "Environmental and Sustainability",
-            ),
-            ("Construction and Real Estate", "Construction and Real Estate"),
-            ("Consulting and Strategy", "Consulting and Strategy"),
-            ("Other", "Other"),
-        ],
-    )
-    submit = SubmitField("Save Placement Request")
     jobPreferences = TextAreaField(
         "Job Preferences", validators=[Optional(), Length(max=500)]
     )
@@ -311,29 +216,12 @@ class RecruiterRegistrationForm(FlaskForm):
     )
     submit = SubmitField("Register")
 
-    def validate_emailAddress(self, field):
-        if Recruiter.query.filter_by(emailAddress=field.data.lower()).first():
-            raise ValidationError("Email address already registered.")
-
 
 class UserRegistrationForm(FlaskForm):
     # Personal details
-    firstName = StringField(
-        "Enter first name", validators=[DataRequired(), Length(1, 50)]
+    name = StringField(
+        "Enter name", validators=[DataRequired(), Length(1, 50)]
     )
-    middleName = StringField(
-        "Enter middle name", validators=[DataRequired(), Length(1, 50)]
-    )
-    lastName = StringField(
-        "Enter last name", validators=[DataRequired(), Length(1, 50)]
-    )
-    gender = SelectField(
-        "Select your gender",
-        choices=[("Female", "Female"), ("Male", "Male")],
-        validators=[DataRequired()],
-    )
-
-    # Contact details
     emailAddress = StringField(
         "Enter your email address",
         validators=[
@@ -360,17 +248,7 @@ class UserRegistrationForm(FlaskForm):
         validators=[DataRequired(), EqualTo("password")],
         render_kw={"autocomplete": "new-password"},
     )
-
-    # User consent
-    consent = BooleanField(
-        "I agree to all statements in Terms of service",
-        validators=[DataRequired()],
-    )
     submit = SubmitField("Register")
-
-    def validate_emailAddress(self, field):
-        if User.query.filter_by(emailAddress=field.data.lower()).first():
-            raise ValidationError("Email address already registered.")
 
 
 class PasswordResetForm(FlaskForm):

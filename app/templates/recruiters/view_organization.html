@@ -38,9 +38,9 @@
         <td>{{ moment(job_listing.deadline).format('LLLL') }}</td>
         <td>{{ moment(job_listing.dateCreated).format('LLLL') }}</td>
         <td>
-          <a href="{{ url_for('recruiters.view_job', job_listing_id=job_listing.jobListingId) }}" class="btn btn-primary">View</a>
-          <a href="{{ url_for('recruiters.update_job', job_listing_id=job_listing.jobListingId) }}" class="btn btn-secondary">Edit</a>
-          <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteJobListing{{ loop.index }}Modal">
+          <a href="{{ url_for('recruiters.view_job', job_listing_id=job_listing.jobListingId) }}" class="btn btn-primary my-1">View</a>
+          <a href="{{ url_for('recruiters.update_job', job_listing_id=job_listing.jobListingId) }}" class="btn btn-secondary my-1">Edit</a>
+          <button type="button" class="btn btn-danger my-1" data-bs-toggle="modal" data-bs-target="#deleteJobListing{{ loop.index }}Modal">
             Delete
           </button>
         </td>

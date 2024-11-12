@@ -54,7 +54,7 @@ View Job #{{ job.jobListingId }}
           {% for application in job.applications %}
           <tr>
             <td>{{ application.applicationId }}</td>
-            <td>{{ application.applicant.name }}</td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#viewProfile{{ loop.index }}Modal">{{ application.applicant.name }}</a></td>
             <td>{{ moment(application.dateCreated).format('LLLL') }}</td>
             <td>
               <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewResume{{ loop.index }}Modal">
@@ -68,14 +68,28 @@ View Job #{{ job.jobListingId }}
             </td>
             <td>{{ application.status }}</td>
             <td>
-              <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#acceptApplication{{ loop.index }}Modal">
+              <button type="button" class="btn btn-success m-2" data-bs-toggle="modal" data-bs-target="#acceptApplication{{ loop.index }}Modal" {% if application.status != "Submitted" %}disabled{% endif %}>
                 Accept
               </button>
-              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectApplication{{ loop.index }}Modal">
+              <button type="button" class="btn btn-danger m-2" data-bs-toggle="modal" data-bs-target="#rejectApplication{{ loop.index }}Modal" {% if application.status != "Submitted" %}disabled{% endif %}>
                 Reject
               </button>
             </td>
           </tr>
+          
+          <!-- View profile modal -->
+          <div class="modal modal-lg fade" id="viewProfile{{ loop.index }}Modal" tabindex="-1" aria-labelledby="viewProfile{{ loop.index }}ModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="viewProfile{{ loop.index }}ModalLabel">{{ application.applicant.name }}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body scrollable-modal-body">
+                </div>
+              </div>
+            </div>
+          </div>
 
           <!-- View cover letter modal -->
           <div class="modal modal-lg fade" id="viewCoverLetter{{ loop.index }}Modal" tabindex="-1" aria-labelledby="viewCoverLetter{{ loop.index }}ModalLabel" aria-hidden="true">
@@ -121,7 +135,7 @@ View Job #{{ job.jobListingId }}
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                   <form action="{{ url_for('recruiters.accept_application', application_id=application.applicationId) }}" method="post">
-                    <button type="submit" class="btn btn-danger">Accept</button>
+                    <button type="submit" class="btn btn-success">Accept</button>
                   </form>
                 </div>
               </div>

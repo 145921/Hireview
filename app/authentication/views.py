@@ -147,9 +147,6 @@ def user_registration():
         # Retrieve user form details
         details = {
             "name": form.name.data,
-            "middleName": form.middleName.data,
-            "lastName": form.lastName.data,
-            "gender": form.gender.data,
             "emailAddress": form.emailAddress.data,
             "phoneNumber": form.phoneNumber.data,
             "password": form.password.data,

@@ -416,3 +416,17 @@ class Recruiter(flask_login.UserMixin, db.Model):
         db.session.commit()
 
         return True
+
+    def approve(self):
+        """
+        Allows recruiter to interact with the system.
+        """
+        self.isApproved = True
+        db.session.commit()
+
+    def reject(self):
+        """
+        Restricts recruiter from interacting with the system.
+        """
+        self.isApproved = False
+        db.session.commit()
