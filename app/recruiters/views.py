@@ -6,8 +6,8 @@ from . import recruiters
 from .forms import JobListingForm
 from .forms import OrganizationForm
 
-from ..models import Applicant
 from ..models import JobListing
+from ..models import Application
 from ..models import Organization
 from utilities.authentication import email_confirmation_required
 
@@ -123,8 +123,15 @@ def view_organization(organization_id):
 @recruiters.route("/jobs", methods=["GET"])
 @login_required
 def list_jobs():
-    jobs = JobListing.query.filter_by(recruiter_id=current_user.id).all()
-    return flask.render_template("recruiters/jobs.html", jobs=jobs)
+    jobs = (
+        JobListing.query.join(
+            Organization,
+            JobListing.organizationId == Organization.organizationId,
+        )
+        .filter(Organization.recruiterId == current_user.recruiterId)
+        .all()
+    )
+    return flask.render_template("recruiters/view_jobs.html", jobs=jobs)
 
 
 @recruiters.route(
@@ -165,52 +172,100 @@ def add_job_listing(organization_id):
     )
 
 
-@recruiters.route("/job/<int:job_id>/edit", methods=["GET", "POST"])
+@recruiters.route("/jobs/<int:job_listing_id>/edit")
 @login_required
-def edit_job(job_id):
-    job = JobListing.query.get_or_404(job_id)
+def view_job(job_listing_id):
+    job = JobListing.query.filter_by(
+        jobListingId=job_listing_id
+    ).first_or_404()
+    return flask.render_template("recruiters/view_job.html", job=job)
+
+
+@recruiters.route("/jobs/<int:job_listing_id>/update", methods=["GET", "POST"])
+@login_required
+def update_job(job_listing_id):
+    # Retrieve job record
+    job = JobListing.query.get_or_404(job_listing_id)
+
+    # Instantialize Job Listing Update Form
     form = JobListingForm(obj=job)
+
     if form.validate_on_submit():
+        # Retrieve form details
+        details = {
+            "title": form.title.data,
+            "description": form.description.data,
+            "position": form.position.data,
+            "workingMethod": form.workingMethod.data,
+            "category": form.category.data,
+            "location": form.location.data,
+            "deadline": form.deadline.data,
+        }
         # Update job listing
+        job.update(details)
+
+        # Render success message
         flask.flash("Job listing updated.", "success")
-        return flask.redirect(flask.url_for("recruiters.list_jobs"))
+        return flask.redirect(
+            flask.url_for(
+                "recruiters.view_job", job_listing_id=job.jobListingId
+            )
+        )
+
     return flask.render_template(
-        "recruiters/edit_job.html", form=form, job=job
+        "recruiters/update_job.html", form=form, job=job
     )
 
 
-@recruiters.route("/job/<int:job_id>/delete", methods=["POST"])
+@recruiters.route("/jobs/<int:job_listing_id>/delete", methods=["POST"])
 @login_required
-def delete_job(job_id):
+def delete_job(job_listing_id):
+    # Retrieve job listing
+    job = JobListing.query.get_or_404(job_listing_id)
+
     # Delete job listing
+    job.delete()
+
+    # Render success message
     flask.flash("Job listing deleted.", "info")
     return flask.redirect(flask.url_for("recruiters.list_jobs"))
 
 
-@recruiters.route("/job/<int:job_id>/close", methods=["POST"])
+@recruiters.route(
+    "/applications/<int:application_id>/reject", methods=["POST"]
+)
 @login_required
-def close_job(job_id):
-    # Close job listing
-    flask.flash("Job listing closed.", "info")
-    return flask.redirect(flask.url_for("recruiters.list_jobs"))
+def reject_application(application_id):
+    # Retrieve application record
+    application = Application.query.get_or_404(application_id)
 
+    # Mark application as rejected
+    application.reject()
 
-@recruiters.route("/job/<int:job_id>/applications", methods=["GET"])
-@login_required
-def view_job_applications(job_id):
-    applications = Applicant.query.filter_by(job_id=job_id).all()
-    return flask.render_template(
-        "recruiters/view_job_applications.html", applications=applications
+    # Render success message and redirect to job profile page
+    flask.flash("Email sent to applicant successfully", "success")
+    return flask.redirect(
+        flask.url_for(
+            "recruiters.view_job", job_listing_id=application.job.jobListingId
+        )
     )
 
 
 @recruiters.route(
-    "/job/<int:job_id>/select-applicant/<int:applicant_id>", methods=["POST"]
+    "/applications/<int:application_id>/accept", methods=["POST"]
 )
 @login_required
-def select_applicant(job_id, applicant_id):
-    # Select most eligible applicant
-    flask.flash("Applicant selected and notified.", "success")
+def accept_application(application_id):
+    # Retrieve application record
+    application = Application.query.get_or_404(application_id)
+
+    # Mark application as accepted
+    application.accept()
+
+    # Render success message and redirect to job profile page
+    flask.flash("Email sent to applicant successfully", "success")
     return flask.redirect(
-        flask.url_for("recruiters.view_job_applications", job_id=job_id)
+        flask.url_for(
+            "recruiters.view_job", job_listing_id=application.job.jobListingId
+        )
     )

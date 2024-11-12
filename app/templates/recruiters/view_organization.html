@@ -29,7 +29,7 @@
     <tbody>
       {% for job_listing in organization.job_listings %}
       <tr>
-        <td>{{ job_listing.name }}</td>
+        <td>{{ job_listing.jobListingId }}</td>
         <td>{{ job_listing.title }}</td>
         <td>{{ job_listing.position }}</td>
         <td>{{ job_listing.workingMethod }}</td>
@@ -38,8 +38,8 @@
         <td>{{ moment(job_listing.deadline).format('LLLL') }}</td>
         <td>{{ moment(job_listing.dateCreated).format('LLLL') }}</td>
         <td>
-          <a href="{{ url_for('recruiters.view_job_listing', job_listing_id=job_listing.jobListingId) }}" class="btn btn-primary">View</a>
-          <a href="{{ url_for('recruiters.update_job_listing', job_listing_id=job_listing.jobListingId) }}" class="btn btn-secondary">Edit</a>
+          <a href="{{ url_for('recruiters.view_job', job_listing_id=job_listing.jobListingId) }}" class="btn btn-primary">View</a>
+          <a href="{{ url_for('recruiters.update_job', job_listing_id=job_listing.jobListingId) }}" class="btn btn-secondary">Edit</a>
           <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteJobListing{{ loop.index }}Modal">
             Delete
           </button>
@@ -58,7 +58,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <form action="{{ url_for('recruiters.delete_job_listing', job_listing_id=job_listing.jobListingId) }}" method="post">
+              <form action="{{ url_for('recruiters.delete_job', job_listing_id=job_listing.jobListingId) }}" method="post">
                 <button type="submit" class="btn btn-danger">Delete</button>
               </form>
             </div>

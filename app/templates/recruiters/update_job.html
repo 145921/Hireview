@@ -1,0 +1,77 @@
+{% extends "recruiters/base.html" %}
+{% block title %}
+Update Job
+{% endblock %}
+
+{% block page_content %}
+<h3 class="text-center mb-4">Update Job</h3>
+<form id="update-job-listing-form" action="{{ url_for('recruiters.update_job', job_listing_id=job.jobListingId) }}" method="POST">
+  {{ form.hidden_tag() }}
+
+  <!-- Title Field -->
+  <div class="mb-3">
+    {{ form.title.label(class="form-label") }}
+    {{ form.title(class="form-control") }}
+    {% for error in form.title.errors %}
+    <div class="text-danger">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <!-- Position Field -->
+  <div class="mb-3">
+    {{ form.position.label(class="form-label") }}
+    {{ form.position(class="form-control") }}
+    {% for error in form.position.errors %}
+    <div class="text-danger">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <!-- Working Method Field -->
+  <div class="mb-3">
+    {{ form.workingMethod.label(class="form-label") }}
+    {{ form.workingMethod(class="form-control") }}
+    {% for error in form.workingMethod.errors %}
+    <div class="text-danger">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <!-- Description Field -->
+  <div class="mb-3">
+    {{ form.description.label(class="form-label") }}
+    {{ form.description(class="form-control", rows=5) }}
+    {% for error in form.description.errors %}
+    <div class="text-danger">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <!-- Category Field -->
+  <div class="mb-3">
+    {{ form.category.label(class="form-label") }}
+    {{ form.category(class="form-control") }}
+    {% for error in form.category.errors %}
+    <div class="text-danger">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <!-- Location Field -->
+  <div class="mb-3">
+    {{ form.location.label(class="form-label") }}
+    {{ form.location(class="form-control") }}
+    {% for error in form.location.errors %}
+    <div class="text-danger">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <!-- Deadline Field -->
+  <div class="mb-3">
+    {{ form.deadline.label(class="form-label") }}
+    {{ form.deadline(class="form-control") }}
+    {% for error in form.deadline.errors %}
+    <div class="text-danger">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <!-- Submit Button -->
+  {{ form.submit(class="btn btn-custom-primary") }}
+</form>
+{% endblock %}

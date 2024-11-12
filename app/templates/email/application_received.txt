@@ -2,7 +2,7 @@ Subject: Application Received for {{ job.title }}
 
 Hello {{ applicant.name }},
 
-Thank you for applying for the "{{ job.title }}" position at {{ organization.name }}. We have received your application and will review it shortly. You will be notified once a decision is made.
+Thank you for applying for the "{{ job.title }}" position at {{ job.organization.name }}. We have received your application and will review it shortly. You will be notified once a decision is made.
 
 Best Regards,
 The Hireview Team

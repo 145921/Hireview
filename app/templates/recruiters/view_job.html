@@ -1,0 +1,173 @@
+{% extends "recruiters/base.html" %}
+{% block title %}
+View Job #{{ job.jobListingId }}
+{% endblock %}
+
+{% block page_content %}
+<!-- Job Header -->
+<div class="job-header">
+  <h1>{{ job.title }}</h1>
+  <span class="badge bg-primary">{{ job.category }}</span>
+  <span class="badge bg-success">{{ job.workingMethod }}</span>
+  <p class="text-muted mt-3">Location: {{ job.location }} | Deadline: {{ moment(job.deadline).format('LLLL') }}</p>
+</div>
+
+<div class="container">
+  <a href="{{ url_for('recruiters.update_job', job_listing_id=job.jobListingId) }}" class="mb-4 btn btn-custom-primary w-100">Update Job Listing</a>
+</div>
+
+
+<!-- Tabs Section -->
+<ul class="nav nav-tabs" id="jobDetailsTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="overview-tab" data-bs-toggle="tab" href="#overview" role="tab">Job Overview</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="applications-tab" data-bs-toggle="tab" href="#applications" role="tab">Applications</a>
+  </li>
+</ul>
+<div class="tab-content mt-3" id="jobDetailsTabContent">
+  <!-- Job Overview Tab -->
+  <div class="tab-pane fade show active" id="overview" role="tabpanel">
+    <div class="job-overview mb-4">
+      <h2>Job Overview</h2>
+      <p style="white-space: pre-line;">{{ job.description }}</p>
+    </div>
+  </div>
+  <!-- Application Requirements Tab -->
+  <div class="tab-pane fade" id="applications" role="tabpanel">
+    <h3 class="text-center mb-4">Applications</h3>
+    <div class="table-responsive">
+      <table id="applicationsTable" class="table table-striped table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Applicant</th>
+            <th>Date Applied</th>
+            <th>Resume</th>
+            <th>Cover Letter</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for application in job.applications %}
+          <tr>
+            <td>{{ application.applicationId }}</td>
+            <td>{{ application.applicant.name }}</td>
+            <td>{{ moment(application.dateCreated).format('LLLL') }}</td>
+            <td>
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteOrganization{{ loop.index }}Modal">
+                View Resume
+              </button>
+            </td>
+            <td>
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteOrganization{{ loop.index }}Modal">
+                View Cover Letter
+              </button>
+            </td>
+            <td>{{ application.status }}</td>
+            <td>
+              <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#deleteOrganization{{ loop.index }}Modal">
+                Accept
+              </button>
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteOrganization{{ loop.index }}Modal">
+                Reject
+              </button>
+            </td>
+          </tr>
+
+          <!-- View cover letter modal -->
+          <div class="modal fade" id="viewCoverLetterModal" tabindex="-1" aria-labelledby="viewCoverLetterModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="viewCoverLetterModalLabel">View Cover Letter</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <p style="white-space: pre-line;">{{ application.coverLetter }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- View resume modal -->
+          <div class="modal fade" id="viewResumeModal" tabindex="-1" aria-labelledby="viewResumeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="viewResumeModalLabel">View Resume</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <iframe src="/static/custom/applications/{{ application.applicationId }}/{{ application.resumeUrl }}" width="100%" height="500px" style="border: none;"></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Accept application modal -->
+          <div class="modal fade" id="acceptApplicationModal" tabindex="-1" aria-labelledby="acceptApplicationModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="acceptApplicationModalLabel">Accept Application</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to accept this application?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <form action="{{ url_for('recruiters.accept_application', application_id=application.applicationId) }}" method="post">
+                    <button type="submit" class="btn btn-danger">Accept</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reject application modal -->
+          <div class="modal fade" id="rejectApplicationModal" tabindex="-1" aria-labelledby="rejectApplicationModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="rejectApplicationModalLabel">Reject Application</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to reject this application?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <form action="{{ url_for('recruiters.reject_application', application_id=application.applicationId) }}" method="post">
+                    <button type="submit" class="btn btn-danger">Reject</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+  // Initialize DataTable with options
+  $(document).ready(function() {
+      $('#applicationsTable').DataTable({
+          responsive: true,
+          pagingType: "simple",
+          language: {
+              search: "_INPUT_",
+              searchPlaceholder: "Search Applications..."
+            },
+          columnDefs: [
+              { orderable: false, targets: -1 }
+            ]
+        });
+    });
+</script>
+{% endblock %}

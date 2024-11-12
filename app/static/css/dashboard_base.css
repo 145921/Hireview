@@ -58,7 +58,7 @@
 	border-radius: 50%;
 	margin: 0 auto;
 	margin-bottom: 10px;
-	border: 3px solid #fff; /* Subtle border around the image */
+	border: 3px solid orange; /* Subtle border around the image */
 }
 
 .bg-wrap .user-logo h3 {
@@ -353,3 +353,151 @@ transition: all 0.3s; }
 	border-bottom-right-radius: 15px;
 }
 
+.search-bar {
+	max-width: 600px;
+	margin: 0 auto 2rem auto;
+	display: flex;
+	justify-content: center;
+}
+
+.search-bar input {
+	width: 100%;
+	padding: 0.75rem;
+	border-radius: 50px;
+	border: 1px solid #ddd;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.opportunity-card {
+	border: none;
+	border-radius: 15px;
+	background-color: var(--card-bg);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	margin-bottom: 1.5rem;
+}
+
+.opportunity-card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.opportunity-card .card-body {
+	padding: 1.25rem;
+}
+
+.opportunity-title {
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: var(--custom-primary-color);
+}
+
+.opportunity-info {
+	font-size: 0.9rem;
+	color: #7f8c8d;
+}
+
+.apply-btn {
+	background-color: var(--custom-primary-color);
+	color: #ffffff;
+	text-decoration: none;
+	padding: 0.5rem 1rem;
+	border-radius: 20px;
+	display: inline-block;
+	margin-top: 1rem;
+	transition: background-color 0.3s;
+}
+
+.apply-btn:hover {
+	background-color: #00224e;
+}
+
+.category-badge {
+	background-color: #d35400;
+	color: white;
+	font-size: 0.8rem;
+	padding: 0.3rem 0.75rem;
+	border-radius: 30px;
+	display: inline-block;
+	margin-bottom: 0.75rem;
+}
+:root {
+	--custom-primary-color: #003366;
+	--custom-secondary-color: #f5f7fa;
+	--card-bg: #ffffff;
+	--job-primary-color: #003366;
+	--job-secondary-color: #f5f7fa;
+	--tab-bg-color: #ffffff;
+	--btn-primary-hover: #00224e;
+}
+
+.job-header {
+	text-align: center;
+	margin-bottom: 1.5rem;
+}
+
+.job-header h1 {
+	color: var(--job-primary-color);
+	font-size: 2rem;
+	font-weight: 700;
+}
+
+.job-header .badge {
+	font-size: 1rem;
+	padding: 0.4rem 0.8rem;
+	margin-right: 0.5rem;
+}
+
+.job-overview {
+	background-color: var(--tab-bg-color);
+	padding: 0.5rem;
+}
+
+.job-overview h2 {
+	font-size: 1.5rem;
+	color: var(--job-primary-color);
+}
+
+.tab-content .tab-pane {
+	padding: 1.5rem;
+	background-color: var(--tab-bg-color);
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.apply-btn {
+	background-color: var(--job-primary-color);
+	color: #fff;
+	text-align: center;
+	padding: 0.75rem 1.5rem;
+	border-radius: 5px;
+	margin-top: 1rem;
+	display: inline-block;
+	transition: background-color 0.3s;
+}
+
+.apply-btn:hover {
+	background-color: var(--btn-primary-hover);
+}
+
+.nav-tabs .nav-link {
+	border: none;
+	border-bottom: 3px solid transparent;
+	color: var(--job-primary-color);
+	font-weight: 600;
+}
+
+.nav-tabs .nav-link.active {
+	border-bottom: 3px solid var(--job-primary-color);
+	color: var(--job-primary-color);
+}
+
+.section-title {
+	color: #555;
+	font-weight: 700;
+	margin-bottom: 0.5rem;
+}
+
+p, li {
+	font-size: 1rem;
+}

@@ -1,7 +1,62 @@
-{% extends "dashboard_base.html" %}
+{% extends "applicants/base.html" %}
 {% block title %}
 Dashboard
 {% endblock %}
 
 {% block page_content %}
+<!-- Search Bar -->
+<div class="search-bar">
+  <input type="text" id="job-search" placeholder="Search job jobs...">
+</div>
+
+<!-- Job Opportunities Grid -->
+<div id="job-grid" class="container">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+    {% for job in jobs %}
+    <div class="col profile-card" data-title="{{ job.title}}" data-position="{{ job.position }}" data-location="{{ job.location }}" data-description="{{ job.description }}" data-institution="{{ job.organization.name }}" data-working-method="{{ job.workingMethod }}" data-category="{{ job.category }}">
+      <div class="card job-card">
+        <div class="card-body">
+          <span class="category-badge">{{ job.category }}</span>
+          <h5 class="job-title mt-3 text-custom">{{ job.position }}</h5>
+          <p class="job-info">
+          <strong>Institution: </strong>{{ job.organization.name }}<br>
+          <span class="mt-2 d-block"><strong>Location: </strong>{{ job.location }}</span><br>
+          <span class="d-block"><strong>Working Method: </strong>{{ job.workingMethod | title }}</span></p>
+          <p class="card-text">
+          {{ job.description[0: 400] }}...
+          </p>
+          <a href="{{ url_for('accounts.view_job', job_id=job.jobId) }}" class="apply-btn custom-btn-primary">Apply Now</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+<!-- Filtering Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('job-search');
+      const jobGrid = document.getElementById('job-grid');
+      const jobCards = Array.from(jobGrid.getElementsByClassName('profile-card'));
+
+      searchInput.addEventListener('input', () => {
+          const searchTerm = searchInput.value.toLowerCase();
+
+          jobCards.forEach(card => {
+              const name = card.getAttribute('data-name').toLowerCase();
+              const location = card.getAttribute('data-location').toLowerCase();
+              const description = card.getAttribute('data-description').toLowerCase();
+              const institution = card.getAttribute('data-institution').toLowerCase();
+              const working_method = card.getAttribute('data-working-method').toLowerCase();
+              const category = card.getAttribute('data-category').toLowerCase();
+
+              if (name.includes(searchTerm) || location.includes(searchTerm) || description.includes(searchTerm) || institution.includes(searchTerm) || working_method.includes(searchTerm) || category.includes(searchTerm)) {
+                  card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                  }
+            });
+        });
+    });
+</script>
 {% endblock %}
