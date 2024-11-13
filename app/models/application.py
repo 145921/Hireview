@@ -125,6 +125,7 @@ class Application(db.Model):
         self.status = "Rejected"
         db.session.commit()
 
+        print("sending an email")
         # Send email to applicant
         subject = f"Job Application Update: {self.job_listing.title}"
         send_email(

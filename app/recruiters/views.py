@@ -11,13 +11,6 @@ from ..models import Application
 from ..models import Organization
 
 from utilities.authentication import user_type_validator
-from utilities.authentication import email_confirmation_required
-
-
-@recruiters.before_request
-@email_confirmation_required
-def restrict_unconfirmed():
-    pass
 
 
 @recruiters.route("/dashboard")

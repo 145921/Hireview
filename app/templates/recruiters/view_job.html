@@ -164,20 +164,59 @@ View Job #{{ job.jobListingId }}
   </div>
 </div>
 <script>
+
+  function harmonize(comparisonEducation, customEducation) {
+      if (customEducation === "High School Diploma") {
+          if (comparisonEducation === "High School Diploma") {
+              return true;
+            } else {
+                return false;
+              }
+        }
+
+      else if (customEducation === "Associate Degree") {
+          if (comparisonEducation === "High School Diploma" || comparisonEducation === "Associate Degree") {
+              return true;
+            } else {
+                return false;
+              }
+
+        } else if (customEducation === "Bachelor's Degree") {
+            if (comparisonEducation === "High School Diploma" || comparisonEducation === "Associate Degree" || comparisonEducation === "Bachelor's Degree") {
+                return true;
+              } else {
+                  return false;
+                }
+          } else if (customEducation === "Master's Degree") {
+              if (comparisonEducation === "High School Diploma" || comparisonEducation === "Associate Degree" || comparisonEducation === "Bachelor's Degree" || comparisonEducation === "Master's Degree") {
+                  return true;
+                } else {
+                    return false;
+                  }
+            } else if (customEducation === "Doctorate") {
+                if (comparisonEducation === "High School Diploma" || comparisonEducation === "Associate Degree" || comparisonEducation === "Bachelor's Degree" || comparisonEducation === "Master's Degree" || comparisonEducation === "Doctorate") {
+                    return true;
+                  } else {
+                      return false;
+                    }
+              } else if (customEducation === "Other") {
+                  return false;
+                }
+    }
+
   function applyFilter() {
       const educationLevel = "{{ job.educationLevel | safe }}";
       const yearsOfExperience = "{{ job.yearsOfExperience }}";
       document.querySelectorAll('#applicationsTable tbody tr').forEach(row => {
           const applicantEducation = row.getAttribute('data-education');
           const applicantExperience = parseInt(row.getAttribute('data-experience'));
-
-          if (applicantEducation === educationLevel && applicantExperience >= parseInt(yearsOfExperience)) {
+          if (harmonize(educationLevel, applicantEducation) && applicantExperience >= parseInt(yearsOfExperience)) {
               row.style.display = '';
             } else {
                 row.style.display = 'none';
               }
-        });
-    }
+    });
+  }
 
   function resetFilter() {
       document.querySelectorAll('#applicationsTable tbody tr').forEach(row => {
@@ -194,9 +233,10 @@ View Job #{{ job.jobListingId }}
               search: "_INPUT_",
               searchPlaceholder: "Search Applications..."
             },
-          columnDefs: [
-              { orderable: false, targets: -1 }
-            ]
+          columnDefs: [{
+              orderable: false,
+              targets: -1
+            }]
         });
     });
 </script>

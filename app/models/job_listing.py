@@ -63,6 +63,9 @@ class JobListing(db.Model):
         # Send email to all relevant applicants
         subject = f"New Job Available: {job_listing.title}"
         for applicant in Applicant.query.all():
+            if job_listing.category != applicant.industries:
+                continue
+
             send_email(
                 [applicant.emailAddress],
                 subject,

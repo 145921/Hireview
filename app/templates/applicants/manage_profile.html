@@ -62,14 +62,6 @@ Manage Profile
         {% endfor %}
       </div>
 
-      <div class="mb-3">
-        {{ profile_form.yearsOfExperience.label(class="form-label") }}
-        {{ profile_form.yearsOfExperience(class="form-control") }}
-        {% for error in profile_form.yearsOfExperience.errors %}
-        <div class="text-danger">{{ error }}</div>
-        {% endfor %}
-      </div>
-
       {{ profile_form.submit(class = "btn btn-custom-primary") }}
     </form>
   </div>

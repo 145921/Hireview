@@ -16,20 +16,23 @@ from ..models import Application
 
 from utilities.file_saver import allowed_file
 from utilities.authentication import user_type_validator
-from utilities.authentication import email_confirmation_required
-
-
-@applicants.before_request
-@email_confirmation_required
-def restrict_unconfirmed():
-    pass
 
 
 @applicants.route("/dashboard")
 @login_required
 @user_type_validator("applicant")
 def dashboard():
-    jobs = JobListing.query.filter(JobListing.deadline > datetime.now()).all()
+    jobs = JobListing.query.filter(
+        JobListing.deadline > datetime.now(),
+        JobListing.category == current_user.industries,
+    ).all()
+
+    # Display only jobs not applied by the applicant
+    applied_jobs = [
+        application.job_listing for application in current_user.applications
+    ]
+    jobs = [job for job in jobs if job not in applied_jobs]
+
     return flask.render_template("applicants/dashboard.html", jobs=jobs)
 
 
@@ -217,7 +220,20 @@ def manage_profile():
     profile_form.csrf_token.render_kw = {"id": "profile_csrf"}
 
     if profile_form.validate_on_submit():
+        # Retrieve form details
+        details = {
+            "name": profile_form.name.data,
+            "phoneNumber": profile_form.phoneNumber.data,
+            "gender": profile_form.gender.data,
+            "dateOfBirth": profile_form.dateOfBirth.data,
+            "industries": profile_form.industries.data,
+            "educationLevel": profile_form.educationLevel.data,
+        }
+
         # Update applicant profile logic
+        current_user.update(details)
+
+        # Render success message
         flask.flash("Applicant information updated successfully.", "success")
         return flask.redirect(flask.url_for("applicants.manage_profile"))
 

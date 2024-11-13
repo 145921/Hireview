@@ -95,13 +95,6 @@ class UpdateApplicantForm(FlaskForm):
         ],
         validators=[Optional()],
     )
-    yearsOfExperience = IntegerField(
-        "Years of Experience",
-        validators=[
-            Optional(),
-            NumberRange(min=0, message="Must be a non-negative number"),
-        ],
-    )
     submit = SubmitField("Update Applicant Information")
 
 
