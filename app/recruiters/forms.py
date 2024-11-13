@@ -3,12 +3,14 @@ from wtforms import DateField
 from wtforms import StringField
 from wtforms import SubmitField
 from wtforms import SelectField
+from wtforms import IntegerField
 from wtforms import TextAreaField
 from wtforms import DateTimeField
 
-from wtforms.validators import DataRequired
 from wtforms.validators import Length
 from wtforms.validators import Optional
+from wtforms.validators import NumberRange
+from wtforms.validators import DataRequired
 
 
 class JobListingForm(FlaskForm):
@@ -82,6 +84,25 @@ class JobListingForm(FlaskForm):
         ],
     )
 
+    educationLevel = SelectField(
+        "Education Level",
+        choices=[
+            ("High School Diploma", "High School Diploma"),
+            ("Associate Degree", "Associate Degree"),
+            ("Bachelor's Degree", "Bachelor's Degree"),
+            ("Master's Degree", "Master's Degree"),
+            ("Doctorate", "Doctorate"),
+            ("Other", "Other"),
+        ],
+        validators=[Optional()],
+    )
+    yearsOfExperience = IntegerField(
+        "Years of Experience",
+        validators=[
+            Optional(),
+            NumberRange(min=0, message="Must be a non-negative number"),
+        ],
+    )
     location = StringField(
         "Location", validators=[Optional(), Length(max=120)]
     )

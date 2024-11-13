@@ -16,6 +16,7 @@ class Application(db.Model):
     __tablename__ = "Application"
 
     applicationId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    yearsOfExperience = db.Column(db.Integer, nullable=True)
     jobListingId = db.Column(
         db.Integer,
         db.ForeignKey("JobListing.jobListingId", ondelete="CASCADE"),

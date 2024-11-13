@@ -9,6 +9,7 @@ View Job #{{ job.jobListingId }}
   <h1>{{ job.title }}</h1>
   <span class="badge bg-primary">{{ job.category }}</span>
   <span class="badge bg-success">{{ job.workingMethod }}</span>
+  <p class="text-muted mt-3">Must have <span class="fw-bold">{{ job.educationLevel }}</span> with <span class="fw-bold">{{ job.yearsOfExperience }} Years of Experience</span></p>
   <p class="text-muted mt-3">Location: {{ job.location }} | Deadline: {{ moment(job.deadline).format('LLLL') }}</p>
 </div>
 
@@ -37,13 +38,18 @@ View Job #{{ job.jobListingId }}
   <!-- Application Requirements Tab -->
   <div class="tab-pane fade" id="applications" role="tabpanel">
     <h3 class="text-center mb-4">Applications</h3>
+    <div class="my-2">
+      <button onclick="applyFilter()" class="btn btn-custom-primary">Apply Filtering</button>
+      <button onclick="resetFilter()" class="btn btn-warning">Reset</button>
+    </div>
     <div class="table-responsive">
       <table id="applicationsTable" class="table table-striped table-hover align-middle">
         <thead>
           <tr>
-            <th>Id</th>
             <th>Applicant</th>
-            <th>Date Applied</th>
+            <th>Years of Experience</th>
+            <th>Industry</th>
+            <th>Education Level</th>
             <th>Resume</th>
             <th>Cover Letter</th>
             <th>Status</th>
@@ -52,10 +58,13 @@ View Job #{{ job.jobListingId }}
         </thead>
         <tbody>
           {% for application in job.applications %}
-          <tr>
-            <td>{{ application.applicationId }}</td>
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#viewProfile{{ loop.index }}Modal">{{ application.applicant.name }}</a></td>
-            <td>{{ moment(application.dateCreated).format('LLLL') }}</td>
+          <tr data-education="{{ application.applicant.educationLevel }}" data-experience="{{ application.yearsOfExperience }}">
+            <td>
+              {{ application.applicant.name }}
+            </td>
+            <td>{{ application.yearsOfExperience }}</td>
+            <td>{{ application.applicant.industries }}</td>
+            <td>{{ application.applicant.educationLevel }}</td>
             <td>
               <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewResume{{ loop.index }}Modal">
                 View Resume
@@ -76,20 +85,6 @@ View Job #{{ job.jobListingId }}
               </button>
             </td>
           </tr>
-          
-          <!-- View profile modal -->
-          <div class="modal modal-lg fade" id="viewProfile{{ loop.index }}Modal" tabindex="-1" aria-labelledby="viewProfile{{ loop.index }}ModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="viewProfile{{ loop.index }}ModalLabel">{{ application.applicant.name }}</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body scrollable-modal-body">
-                </div>
-              </div>
-            </div>
-          </div>
 
           <!-- View cover letter modal -->
           <div class="modal modal-lg fade" id="viewCoverLetter{{ loop.index }}Modal" tabindex="-1" aria-labelledby="viewCoverLetter{{ loop.index }}ModalLabel" aria-hidden="true">
@@ -143,11 +138,11 @@ View Job #{{ job.jobListingId }}
           </div>
 
           <!-- Reject application modal -->
-          <div class="modal fade" id="rejectApplicationModal" tabindex="-1" aria-labelledby="rejectApplicationModalLabel" aria-hidden="true">
+          <div class="modal fade" id="rejectApplication{{ loop.index }}Modal" tabindex="-1" aria-labelledby="rejectApplication{{ loop.index }}ModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="rejectApplicationModalLabel">Reject Application</h5>
+                  <h5 class="modal-title" id="rejectApplication{{ loop.index }}ModalLabel">Reject Application</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -169,6 +164,27 @@ View Job #{{ job.jobListingId }}
   </div>
 </div>
 <script>
+  function applyFilter() {
+      const educationLevel = "{{ job.educationLevel | safe }}";
+      const yearsOfExperience = "{{ job.yearsOfExperience }}";
+      document.querySelectorAll('#applicationsTable tbody tr').forEach(row => {
+          const applicantEducation = row.getAttribute('data-education');
+          const applicantExperience = parseInt(row.getAttribute('data-experience'));
+
+          if (applicantEducation === educationLevel && applicantExperience >= parseInt(yearsOfExperience)) {
+              row.style.display = '';
+            } else {
+                row.style.display = 'none';
+              }
+        });
+    }
+
+  function resetFilter() {
+      document.querySelectorAll('#applicationsTable tbody tr').forEach(row => {
+          row.style.display = '';
+        });
+    }
+
   // Initialize DataTable with options
   $(document).ready(function() {
       $('#applicationsTable').DataTable({

@@ -12,7 +12,6 @@ Dashboard
         <th>Name</th>
         <th>Email Address</th>
         <th>Phone</th>
-        <th>Nationality</th>
         <th>Created</th>
         <th>Orgs</th>
         <th>Is Verified</th>
@@ -26,7 +25,6 @@ Dashboard
         <td>{{ recruiter.name }}</td>
         <td>{{ recruiter.emailAddress }}</td>
         <td>{{ recruiter.phoneNumber }}</td>
-        <td>{{ recruiter.nationality }}</td>
         <td>{{ moment(recruiter.dateCreated).format('LLLL') }}</td>
         <td>{{ recruiter.organizations | length }}</td>
         <td>{{ "Yes" if recruiter.isVerified else "No" }}</td>

@@ -7,148 +7,71 @@ Manage Profile
 <div class="container m-0 p-0">
   <h2 class="mb-4">Manage Profile</h2>
 
-  <!-- Tabs navigation -->
-  <ul class="nav nav-tabs" id="profileTab" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="education-tab" data-bs-toggle="tab" data-bs-target="#education" type="button" role="tab" aria-controls="education" aria-selected="false">Education</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="experience-tab" data-bs-toggle="tab" data-bs-target="#experience" type="button" role="tab" aria-controls="experience" aria-selected="false">Experience</button>
-    </li>
-  </ul>
+  <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+    <form method="POST" class="mt-4" action="{{ url_for('applicants.manage_profile') }}">
+      {{ profile_form.csrf_token }}
 
-  <div class="tab-content" id="profileTabContent">
-    <!-- Profile Form -->
-    <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-      <form method="POST" class="mt-4" action="{{ url_for('applicants.manage_profile') }}">
-        {{ profile_form.csrf_token }}
+      {{ profile_form.hidden_tag() }}
+      <div class="mb-3">
+        {{ profile_form.name.label(class="form-label") }}
+        {{ profile_form.name(class="form-control") }}
+        {% for error in profile_form.name.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
 
-        {{ profile_form.hidden_tag() }}
-        <div class="mb-3">
-          {{ profile_form.name.label(class="form-label") }}
-          {{ profile_form.name(class="form-control") }}
-          {% for error in profile_form.name.errors %}
-          <div class="text-danger">{{ error }}</div>
-          {% endfor %}
-        </div>
+      <div class="mb-3">
+        {{ profile_form.phoneNumber.label(class="form-label") }}
+        {{ profile_form.phoneNumber(class="form-control") }}
+        {% for error in profile_form.phoneNumber.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
+      <!-- Gender Field -->
+      <div class="mb-3">
+        {{ profile_form.gender.label(class="form-label") }}
+        {{ profile_form.gender(class="form-control") }}
+        {% for error in profile_form.gender.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
 
-        <div class="mb-3">
-          {{ profile_form.phoneNumber.label(class="form-label") }}
-          {{ profile_form.phoneNumber(class="form-control") }}
-          {% for error in profile_form.phoneNumber.errors %}
-          <div class="text-danger">{{ error }}</div>
-          {% endfor %}
-        </div>
-        <!-- Gender Field -->
-        <div class="mb-3">
-          {{ profile_form.gender.label(class="form-label") }}
-          {{ profile_form.gender(class="form-control") }}
-          {% for error in profile_form.gender.errors %}
-          <div class="text-danger">{{ error }}</div>
-          {% endfor %}
-        </div>
+      <!-- Date of Birth Field -->
+      <div class="mb-3">
+        {{ profile_form.dateOfBirth.label(class="form-label") }}
+        {{ profile_form.dateOfBirth(class="form-control") }}
+        {% for error in profile_form.dateOfBirth.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
 
-        <!-- Date of Birth Field -->
-        <div class="mb-3">
-          {{ profile_form.dateOfBirth.label(class="form-label") }}
-          {{ profile_form.dateOfBirth(class="form-control") }}
-          {% for error in profile_form.dateOfBirth.errors %}
-          <div class="text-danger">{{ error }}</div>
-          {% endfor %}
-        </div>
+      <!-- Industries Field -->
+      <div class="mb-3">
+        {{ profile_form.industries.label(class="form-label") }}
+        {{ profile_form.industries(class="form-control") }}
+        {% for error in profile_form.industries.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
 
-        <!-- Nationality Field -->
-        <div class="mb-3">
-          {{ profile_form.nationality.label(class="form-label") }}
-          {{ profile_form.nationality(class="form-control") }}
-          {% for error in profile_form.nationality.errors %}
-          <div class="text-danger">{{ error }}</div>
-          {% endfor %}
-        </div>
+      <div class="mb-3">
+        {{ profile_form.educationLevel.label(class="form-label") }}
+        {{ profile_form.educationLevel(class="form-control") }}
+        {% for error in profile_form.educationLevel.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
 
-        <!-- Preferred Location Field -->
-        <div class="mb-3">
-          {{ profile_form.preferredLocation.label(class="form-label") }}
-          {{ profile_form.preferredLocation(class="form-control") }}
-          {% for error in profile_form.preferredLocation.errors %}
-          <div class="text-danger">{{ error }}</div>
-          {% endfor %}
-        </div>
+      <div class="mb-3">
+        {{ profile_form.yearsOfExperience.label(class="form-label") }}
+        {{ profile_form.yearsOfExperience(class="form-control") }}
+        {% for error in profile_form.yearsOfExperience.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
 
-        <!-- Industries Field -->
-        <div class="mb-3">
-          {{ profile_form.industries.label(class="form-label") }}
-          {{ profile_form.industries(class="form-control") }}
-          {% for error in profile_form.industries.errors %}
-          <div class="text-danger">{{ error }}</div>
-          {% endfor %}
-        </div>
-
-        <!-- Job Preferences Field -->
-        <div class="mb-3">
-          {{ profile_form.jobPreferences.label(class="form-label") }}
-          {{ profile_form.jobPreferences(class="form-control") }}
-          {% for error in profile_form.jobPreferences.errors %}
-          <div class="text-danger">{{ error }}</div>
-          {% endfor %}
-        </div>
-
-        {{ profile_form.submit(class = "btn btn-custom-primary") }}
-      </form>
-    </div>
-
-    <!-- Education Form -->
-    <div class="tab-pane fade" id="education" role="tabpanel" aria-labelledby="education-tab">
-      <form method="POST" class="mt-4" action="{{ url_for('applicants.manage_profile') }}">
-        {{ education_form.csrf_token }}
-
-        {{ education_form.hidden_tag() }}
-        {{ education_form.degree.label(class="form-label") }}
-        {{ education_form.degree(class="form-control") }}
-
-        {{ education_form.institution.label(class="form-label") }}
-        {{ education_form.institution(class="form-control") }}
-
-        {{ education_form.startDate.label(class="form-label") }}
-        {{ education_form.startDate(class="form-control") }}
-
-        {{ education_form.endDate.label(class="form-label") }}
-        {{ education_form.endDate(class="form-control") }}
-
-        {{ education_form.documentUrl.label(class="form-label") }}
-        {{ education_form.documentUrl(class="form-control") }}
-
-        {{ education_form.submit(class="btn btn-custom-primary mt-3") }}
-      </form>
-    </div>
-
-    <!-- Experience Form -->
-    <div class="tab-pane fade" id="experience" role="tabpanel" aria-labelledby="experience-tab">
-      <form method="POST" class="mt-4" action="{{ url_for('applicants.manage_profile') }}">
-        {{ experience_form.csrf_token }}
-
-        {{ experience_form.hidden_tag() }}
-        {{ experience_form.position.label(class="form-label") }}
-        {{ experience_form.position(class="form-control") }}
-
-        {{ experience_form.institution.label(class="form-label") }}
-        {{ experience_form.institution(class="form-control") }}
-
-        {{ experience_form.startDate.label(class="form-label") }}
-        {{ experience_form.startDate(class="form-control") }}
-
-        {{ experience_form.endDate.label(class="form-label") }}
-        {{ experience_form.endDate(class="form-control") }}
-
-        {{ experience_form.reasonOfTermination.label(class="form-label") }}
-        {{ experience_form.reasonOfTermination(class="form-control") }}
-
-        {{ experience_form.submit(class="btn btn-custom-primary mt-3") }}
-      </form>
-    </div>
+      {{ profile_form.submit(class = "btn btn-custom-primary") }}
+    </form>
   </div>
 </div>
 {% endblock %}

@@ -1,5 +1,4 @@
 import flask
-import iso3166
 from flask_login import current_user
 from flask_login import login_required
 
@@ -15,8 +14,6 @@ from app import db
 from ..models import User
 from ..models import Applicant
 from ..models import Recruiter
-
-from utilities.authentication import user_type_validator
 
 
 def redirect_after_login(dashboard_route, name):
@@ -106,12 +103,6 @@ def login():
 def applicant_registration():
     form = ApplicantRegistrationForm()
 
-    # Retrieve list of countries
-    countries_list = [
-        ((country.name), (country.name)) for country in iso3166.countries
-    ]
-    form.nationality.choices = countries_list
-
     if form.validate_on_submit():
         # Retrieve form details
         details = {
@@ -121,10 +112,8 @@ def applicant_registration():
             "password": form.password.data,
             "gender": form.gender.data,
             "dateOfBirth": form.dateOfBirth.data,
-            "nationality": form.nationality.data,
-            "preferredLocation": form.preferredLocation.data,
             "industries": form.industries.data,
-            "jobPreferences": form.jobPreferences.data,
+            "educationLevel": form.educationLevel.data,
         }
 
         # Save applicant details
@@ -168,18 +157,11 @@ def user_registration():
 def recruiter_registration():
     form = RecruiterRegistrationForm()
 
-    # Retrieve list of countries
-    countries_list = [
-        ((country.name), (country.name)) for country in iso3166.countries
-    ]
-    form.nationality.choices = countries_list
-
     if form.validate_on_submit():
         # Retrieve recruiter form details
         details = {
             "name": form.name.data,
             "emailAddress": form.emailAddress.data,
-            "nationality": form.nationality.data,
             "phoneNumber": form.phoneNumber.data,
             "password": form.password.data,
         }
@@ -389,7 +371,6 @@ def recruiter_confirm(recruiter_id, token):
 
 @authentication.route("/resend-confirmation-email")
 @login_required
-@user_type_validator("recruiter")
 def resend_confirmation_email():
     current_user.sendConfirmationEmail()
     flask.flash("A new confirmation email has been sent to you via email")

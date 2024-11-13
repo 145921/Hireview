@@ -5,7 +5,6 @@ from wtforms import SubmitField
 from wtforms import SelectField
 from wtforms import BooleanField
 from wtforms import PasswordField
-from wtforms import TextAreaField
 from wtforms import ValidationError
 
 from wtforms.validators import Email
@@ -84,12 +83,6 @@ class ApplicantRegistrationForm(FlaskForm):
     dateOfBirth = DateField(
         "Date of Birth", format="%Y-%m-%d", validators=[Optional()]
     )
-    nationality = SelectField(
-        "Nationality", validators=[Optional(), Length(max=50)]
-    )
-    preferredLocation = StringField(
-        "Preferred Location", validators=[Optional(), Length(max=100)]
-    )
     industries = SelectField(
         "Industry",
         validators=[Optional(), Length(max=120)],
@@ -143,8 +136,17 @@ class ApplicantRegistrationForm(FlaskForm):
             ("Other", "Other"),
         ],
     )
-    jobPreferences = TextAreaField(
-        "Job Preferences", validators=[Optional(), Length(max=500)]
+    educationLevel = SelectField(
+        "Education Level",
+        choices=[
+            ("High School Diploma", "High School Diploma"),
+            ("Associate Degree", "Associate Degree"),
+            ("Bachelor's Degree", "Bachelor's Degree"),
+            ("Master's Degree", "Master's Degree"),
+            ("Doctorate", "Doctorate"),
+            ("Other", "Other"),
+        ],
+        validators=[Optional()],
     )
     password = PasswordField(
         "Enter your Password",
@@ -177,9 +179,6 @@ class RecruiterRegistrationForm(FlaskForm):
         "Select your gender",
         choices=[("Female", "Female"), ("Male", "Male")],
         validators=[DataRequired()],
-    )
-    nationality = SelectField(
-        "Select your nationality", validators=[DataRequired()]
     )
     # Contact details
     emailAddress = StringField(

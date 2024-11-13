@@ -50,24 +50,6 @@ Applicant Sign Up
         {% endfor %}
     </div>
 
-    <!-- Nationality Field -->
-    <div class="mb-3">
-        {{ form.nationality.label(class="form-label") }}
-        {{ form.nationality(class="form-control") }}
-        {% for error in form.nationality.errors %}
-        <div class="text-danger">{{ error }}</div>
-        {% endfor %}
-    </div>
-
-    <!-- Preferred Location Field -->
-    <div class="mb-3">
-        {{ form.preferredLocation.label(class="form-label") }}
-        {{ form.preferredLocation(class="form-control") }}
-        {% for error in form.preferredLocation.errors %}
-        <div class="text-danger">{{ error }}</div>
-        {% endfor %}
-    </div>
-
     <!-- Industries Field -->
     <div class="mb-3">
         {{ form.industries.label(class="form-label") }}
@@ -77,11 +59,10 @@ Applicant Sign Up
         {% endfor %}
     </div>
 
-    <!-- Job Preferences Field -->
     <div class="mb-3">
-        {{ form.jobPreferences.label(class="form-label") }}
-        {{ form.jobPreferences(class="form-control") }}
-        {% for error in form.jobPreferences.errors %}
+        {{ form.educationLevel.label(class="form-label") }}
+        {{ form.educationLevel(class="form-control") }}
+        {% for error in form.educationLevel.errors %}
         <div class="text-danger">{{ error }}</div>
         {% endfor %}
     </div>

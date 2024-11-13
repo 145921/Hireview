@@ -3,14 +3,15 @@ from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms import SubmitField
 from wtforms import SelectField
+from wtforms import IntegerField
 from wtforms import TextAreaField
 from flask_wtf.file import FileField
 from flask_wtf.file import FileAllowed
 from flask_wtf.file import FileRequired
 
-from wtforms.validators import URL
 from wtforms.validators import Length
 from wtforms.validators import Optional
+from wtforms.validators import NumberRange
 from wtforms.validators import DataRequired
 
 from utilities.form_fields import TelephoneField
@@ -28,12 +29,6 @@ class UpdateApplicantForm(FlaskForm):
     )
     dateOfBirth = DateField(
         "Date of Birth", format="%Y-%m-%d", validators=[Optional()]
-    )
-    nationality = SelectField(
-        "Nationality", validators=[Optional(), Length(max=50)]
-    )
-    preferredLocation = StringField(
-        "Preferred Location", validators=[Optional(), Length(max=100)]
     )
     industries = SelectField(
         "Industry",
@@ -88,48 +83,26 @@ class UpdateApplicantForm(FlaskForm):
             ("Other", "Other"),
         ],
     )
-    jobPreferences = TextAreaField(
-        "Job Preferences", validators=[Optional(), Length(max=500)]
+    educationLevel = SelectField(
+        "Education Level",
+        choices=[
+            ("High School Diploma", "High School Diploma"),
+            ("Associate Degree", "Associate Degree"),
+            ("Bachelor's Degree", "Bachelor's Degree"),
+            ("Master's Degree", "Master's Degree"),
+            ("Doctorate", "Doctorate"),
+            ("Other", "Other"),
+        ],
+        validators=[Optional()],
+    )
+    yearsOfExperience = IntegerField(
+        "Years of Experience",
+        validators=[
+            Optional(),
+            NumberRange(min=0, message="Must be a non-negative number"),
+        ],
     )
     submit = SubmitField("Update Applicant Information")
-
-
-class EducationForm(FlaskForm):
-    degree = StringField(
-        "Degree", validators=[DataRequired(), Length(max=100)]
-    )
-    institution = StringField(
-        "Institution", validators=[Optional(), Length(max=100)]
-    )
-    startDate = DateField("Start Date", validators=[Optional()])
-    endDate = DateField("End Date", validators=[Optional()])
-    issueDate = DateField("Issue Date", validators=[Optional()])
-    documentUrl = StringField("Document URL", validators=[Optional(), URL()])
-    submit = SubmitField("Save Education Entry")
-
-
-class UpdateEducationForm(EducationForm):
-    submit = SubmitField("Update Education Entry")
-
-
-class ExperienceForm(FlaskForm):
-    position = StringField(
-        "Position", validators=[DataRequired(), Length(max=100)]
-    )
-    institution = StringField(
-        "Institution", validators=[Optional(), Length(max=100)]
-    )
-    description = TextAreaField("Description", validators=[Optional()])
-    startDate = DateField("Start Date", validators=[Optional()])
-    endDate = DateField("End Date", validators=[Optional()])
-    reasonOfTermination = StringField(
-        "Reason of Termination", validators=[Optional(), Length(max=255)]
-    )
-    submit = SubmitField("Save Experience Entry")
-
-
-class UpdateExperienceForm(ExperienceForm):
-    submit = SubmitField("Update Experience Entry")
 
 
 class JobListingForm(FlaskForm):
@@ -235,6 +208,13 @@ class ApplicationForm(FlaskForm):
         validators=[
             FileRequired(),
             FileAllowed({"pdf"}, "PDF Files only!"),
+        ],
+    )
+    yearsOfExperience = IntegerField(
+        "Years of Experience",
+        validators=[
+            Optional(),
+            NumberRange(min=0, message="Must be a non-negative number"),
         ],
     )
 

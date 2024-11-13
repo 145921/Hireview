@@ -9,6 +9,7 @@ View Job #{{ job.jobListingId }}
   <h1>{{ job.title }}</h1>
   <span class="badge bg-primary">{{ job.category }}</span>
   <span class="badge bg-success">{{ job.workingMethod }}</span>
+  <p class="text-muted mt-3">Must have <span class="fw-bold">{{ job.educationLevel }}</span> with <span class="fw-bold">{{ job.yearsOfExperience }} Years of Experience</span></p>
   <p class="text-muted mt-3">Location: {{ job.location }} | Deadline: {{ moment(job.deadline).format('LLLL') }}</p>
 </div>
 
@@ -158,6 +159,14 @@ View Job #{{ job.jobListingId }}
   <div class="tab-pane fade" id="requirements" role="tabpanel">
     <form id="make-application-form" action="{{ url_for('applicants.view_job', job_listing_id=job.jobListingId) }}" enctype="multipart/form-data" method="POST">
       {{ form.hidden_tag() }}
+
+      <div class="mb-3">
+        {{ form.yearsOfExperience.label(class="form-label") }}
+        {{ form.yearsOfExperience(class="form-control") }}
+        {% for error in form.yearsOfExperience.errors %}
+        <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
       <div class="mb-3">
         {{ form.coverLetter.label(class="form-label") }}
         {{ form.coverLetter(class="form-control", rows=10) }}

@@ -1,17 +1,15 @@
 import os
+from datetime import date
 
 import flask
 import flask_login
 from flask import url_for
 
 from app import db
-from werkzeug.security import check_password_hash
-from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from itsdangerous.url_safe import URLSafeTimedSerializer as Serializer
 
-from utilities.file_saver import save_image
-from utilities.file_saver import delete_file
-
+from utilities.file_saver import save_image, delete_file
 from utilities.email_utils import send_email
 from utilities.securities import get_gravatar_hash
 
@@ -32,12 +30,10 @@ class Applicant(flask_login.UserMixin, db.Model):
     gender = db.Column(db.String(20))
     imageUrl = db.Column(db.String(255))
     dateOfBirth = db.Column(db.Date)
-    nationality = db.Column(db.String(50))
-    preferredLocation = db.Column(db.String(100))
     industries = db.Column(db.String(100))
-    jobPreferences = db.Column(db.Text)
     isActive = db.Column(db.Boolean, default=True, nullable=False)
     isVerified = db.Column(db.Boolean, default=False, nullable=False)
+    educationLevel = db.Column(db.String(50), nullable=True)
     dateCreated = db.Column(db.DateTime, default=db.func.current_timestamp())
     lastUpdated = db.Column(
         db.DateTime,
@@ -46,27 +42,20 @@ class Applicant(flask_login.UserMixin, db.Model):
     )
 
     # Relationships
-    educations = db.relationship(
-        "Education", back_populates="applicant", cascade="all, delete"
-    )
-    experiences = db.relationship(
-        "Experience", back_populates="applicant", cascade="all, delete"
-    )
     applications = db.relationship(
         "Application", back_populates="applicant", cascade="all, delete"
     )
 
     def __init__(self, **kwargs):
         super(Applicant, self).__init__(**kwargs)
-
         # Generate the avatar hash
         if self.emailAddress is not None and self.avatarHash is None:
             self.avatarHash = get_gravatar_hash(self.emailAddress)
 
     def __repr__(self) -> str:
         return (
-            f"Applicant(applicantId={self.applicantId}, "
-            + f"emailAddress={self.emailAddress})"
+            f"Applicant(applicantId={self.applicantId}, emailAddress="
+            + f"{self.emailAddress})"
         )
 
     @classmethod
@@ -83,12 +72,9 @@ class Applicant(flask_login.UserMixin, db.Model):
             phoneNumber=details.get("phoneNumber"),
             password=details.get("password"),
             gender=details.get("gender"),
-            imageUrl=details.get("imageUrl"),
             dateOfBirth=details.get("dateOfBirth"),
-            nationality=details.get("nationality"),
-            preferredLocation=details.get("preferredLocation"),
             industries=details.get("industries"),
-            jobPreferences=details.get("jobPreferences"),
+            educationLevel=details.get("educationLevel"),
         )
         db.session.add(applicant)
         db.session.commit()
@@ -106,20 +92,12 @@ class Applicant(flask_login.UserMixin, db.Model):
         :return: Applicant - The updated applicant instance.
         """
         self.name = details.get("name", self.name)
-        self.emailAddress = details.get("emailAddress", self.emailAddress)
         self.phoneNumber = details.get("phoneNumber", self.phoneNumber)
-        self.passwordHash = details.get("passwordHash", self.passwordHash)
-        self.avatarHash = details.get("avatarHash", self.avatarHash)
         self.gender = details.get("gender", self.gender)
-        self.imageUrl = details.get("imageUrl", self.imageUrl)
         self.dateOfBirth = details.get("dateOfBirth", self.dateOfBirth)
-        self.nationality = details.get("nationality", self.nationality)
-        self.preferredLocation = details.get(
-            "preferredLocation", self.preferredLocation
-        )
         self.industries = details.get("industries", self.industries)
-        self.jobPreferences = details.get(
-            "jobPreferences", self.jobPreferences
+        self.educationLevel = details.get(
+            "educationLevel", self.educationLevel
         )
         db.session.commit()
         return self
@@ -304,44 +282,6 @@ class Applicant(flask_login.UserMixin, db.Model):
 
         return self
 
-    def activateAccount(self) -> None:
-        """
-        Activate the user's account.
-        """
-        if self.isActive:
-            return
-
-        self.isActive = True
-        db.session.commit()
-
-        # Notify user on account activation via email
-        subject = "Account Activation"
-        send_email(
-            [self.emailAddress],
-            subject,
-            "email/account_activation",
-            user=self,
-        )
-
-    def deactivateAccount(self) -> None:
-        """
-        Deactivate the user's account.
-        """
-        if not self.isActive:
-            return
-
-        self.isActive = False
-        db.session.commit()
-
-        # Notify user on account deactivation via email
-        subject = "Account Deactivation"
-        send_email(
-            [self.emailAddress],
-            subject,
-            "email/account_deactivation",
-            user=self,
-        )
-
     def verifyPassword(self, password: str) -> bool:
         """
         Verify the provided password with the stored hash.
@@ -441,16 +381,20 @@ class Applicant(flask_login.UserMixin, db.Model):
 
         return True
 
-    def hasApplied(self, job) -> bool:
+    def getAge(self) -> int:
         """
-        Checks if the applicant has applied for the job
-
-        :param job: JobListing - The job listing to be compared against
+        Retrieve the current user's age
         """
-        applied_jobs = [
-            application.job_listing for application in self.applications
-        ]
-        return job in applied_jobs
+        today = date.today()
+        age = (
+            today.year
+            - self.dateOfBirth.year
+            - (
+                (today.month, today.day)
+                < (self.dateOfBirth.month, self.dateOfBirth.day)
+            )
+        )
+        return age
 
     def getJobApplication(self, job_listing):
         """

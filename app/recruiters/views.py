@@ -166,6 +166,8 @@ def add_job_listing(organization_id):
             "category": form.category.data,
             "location": form.location.data,
             "deadline": form.deadline.data,
+            "educationLevel": form.educationLevel.data,
+            "yearsOfExperience": form.yearsOfExperience.data,
             "organizationId": organization.organizationId,
         }
 
@@ -211,6 +213,8 @@ def update_job(job_listing_id):
             "category": form.category.data,
             "location": form.location.data,
             "deadline": form.deadline.data,
+            "educationLevel": form.educationLevel.data,
+            "yearsOfExperience": form.yearsOfExperience.data,
         }
         # Update job listing
         job.update(details)
@@ -259,7 +263,8 @@ def reject_application(application_id):
     flask.flash("Email sent to applicant successfully", "success")
     return flask.redirect(
         flask.url_for(
-            "recruiters.view_job", job_listing_id=application.job.jobListingId
+            "recruiters.view_job",
+            job_listing_id=application.job_listing.jobListingId,
         )
     )
 

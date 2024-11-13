@@ -38,13 +38,6 @@ Recruiter Sign Up
       {% endfor %}
     </div>
     <div class="mb-3">
-      {{ form.nationality.label(class="form-label") }}
-      {{ form.nationality(class="form-control") }}
-      {% for error in form.nationality.errors %}
-      <div class="text-danger">{{ error }}</div>
-      {% endfor %}
-    </div>
-    <div class="mb-3">
       {{ form.password.label(class="form-label") }}
       {{ form.password(class="form-control") }}
       {% for error in form.password.errors %}

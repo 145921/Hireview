@@ -2,7 +2,6 @@ from app import db
 from datetime import datetime
 
 from utilities.email_utils import send_email
-from utilities.securities import get_eligible_applicants_for_job
 
 
 class JobListing(db.Model):
@@ -22,6 +21,8 @@ class JobListing(db.Model):
     category = db.Column(db.String(100), index=True)
     location = db.Column(db.String(100), index=True)
     deadline = db.Column(db.DateTime)
+    educationLevel = db.Column(db.String(50), nullable=True)
+    yearsOfExperience = db.Column(db.Integer, nullable=True)
     dateCreated = db.Column(db.DateTime, default=datetime.utcnow)
     lastUpdated = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
@@ -53,18 +54,21 @@ class JobListing(db.Model):
         :param details: dict - Details of the job listing to be created.
         :return: JobListing - The newly created job listing instance.
         """
+        from .applicant import Applicant
+
         job_listing = cls(**details)
         db.session.add(job_listing)
         db.session.commit()
 
         # Send email to all relevant applicants
         subject = f"New Job Available: {job_listing.title}"
-        for applicant in get_eligible_applicants_for_job(job_listing):
+        for applicant in Applicant.query.all():
             send_email(
                 [applicant.emailAddress],
                 subject,
                 "email/new_job",
                 job=job_listing,
+                applicant=applicant,
             )
 
         return job_listing

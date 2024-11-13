@@ -53,6 +53,22 @@ Update Job
     {% endfor %}
   </div>
 
+  <div class="mb-3">
+    {{ form.educationLevel.label(class="form-label") }}
+    {{ form.educationLevel(class="form-control") }}
+    {% for error in form.educationLevel.errors %}
+    <div class="text-danger">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="mb-3">
+    {{ form.yearsOfExperience.label(class="form-label") }}
+    {{ form.yearsOfExperience(class="form-control") }}
+    {% for error in form.yearsOfExperience.errors %}
+    <div class="text-danger">{{ error }}</div>
+    {% endfor %}
+  </div>
+
   <!-- Location Field -->
   <div class="mb-3">
     {{ form.location.label(class="form-label") }}
