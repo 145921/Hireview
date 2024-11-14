@@ -377,16 +377,16 @@ def resend_confirmation_email():
     return flask.redirect(flask.url_for("authentication.confirm_email"))
 
 
-@authentication.route("/unconfirmed")
+@authentication.route("/unapproved")
 @login_required
-def confirm_email():
+def approve_account():
     if current_user.is_anonymous:
         return flask.redirect(flask.url_for("main.index"))
 
-    elif current_user.isVerified:
+    elif current_user.isApproved:
         return flask.redirect(flask.url_for("authentication.login"))
-    print(current_user.isVerified)
-    return flask.render_template("authentication/confirm_email.html")
+    print(current_user.isApproved)
+    return flask.render_template("authentication/approve_account.html")
 
 
 # ---------------------------------------------------------------------------

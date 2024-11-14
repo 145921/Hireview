@@ -11,6 +11,13 @@ from ..models import Application
 from ..models import Organization
 
 from utilities.authentication import user_type_validator
+from utilities.authentication import account_approval_required
+
+
+@recruiters.before_request
+@account_approval_required
+def restrict_unapproved():
+    pass
 
 
 @recruiters.route("/dashboard")

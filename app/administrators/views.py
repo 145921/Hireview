@@ -22,7 +22,7 @@ def dashboard():
 @login_required
 def approve_recruiter(recruiter_id):
     # Retrieve recruiter record
-    recruiter = Recruiter.query.get_or_404()
+    recruiter = Recruiter.query.get_or_404(recruiter_id)
 
     # Approve recruiter
     recruiter.approve()
@@ -36,7 +36,7 @@ def approve_recruiter(recruiter_id):
 @login_required
 def reject_recruiter(recruiter_id):
     # Retrieve recruiter record
-    recruiter = Recruiter.query.get_or_404()
+    recruiter = Recruiter.query.get_or_404(recruiter_id)
 
     # Disapprove recruiter
     recruiter.reject()

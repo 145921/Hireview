@@ -49,15 +49,13 @@ def user_type_validator(user_type):
     return decorator
 
 
-def email_confirmation_required(view_func):
+def account_approval_required(view_func):
     @wraps(view_func)
     def wrapped_view(*args, **kwargs):
-        # Check if the user is logged in and belongs to recruiters or
-        # applicants, and is unconfirmed
-        if not current_user.is_authenticated or current_user.isVerified:
+        if not current_user.is_authenticated or current_user.isApproved:
             return view_func(*args, **kwargs)
 
         # Redirect to the email confirmation page
-        return flask.redirect(flask.url_for("authentication.confirm_email"))
+        return flask.redirect(flask.url_for("authentication.approve_account"))
 
     return wrapped_view

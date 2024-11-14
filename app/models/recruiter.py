@@ -421,9 +421,27 @@ class Recruiter(flask_login.UserMixin, db.Model):
         self.isApproved = True
         db.session.commit()
 
+        # Send email to recruiter
+        subject = "Your Hireview Account has been Approved!"
+        send_email(
+            [self.emailAddress],
+            subject,
+            "email/recruiter_approved",
+            recruiter=self,
+        )
+
     def reject(self):
         """
         Restricts recruiter from interacting with the system.
         """
         self.isApproved = False
         db.session.commit()
+
+        # Send email to recruiter
+        subject = "Your Hireview Account Status"
+        send_email(
+            [self.emailAddress],
+            subject,
+            "email/recruiter_rejected",
+            recruiter=self,
+        )
